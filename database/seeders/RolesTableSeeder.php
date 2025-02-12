@@ -2,23 +2,21 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-use App\Models\Role; // Importar el modelo Role
 
 class RolesTableSeeder extends Seeder
 {
     public function run()
     {
         Role::create([
-            'nombre' => 'admin',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'id' => 1,
+            'name' => 'admin',
         ]);
 
         Role::create([
-            'nombre' => 'user',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'id' => 2,
+            'name' => 'user',
         ]);
     }
 }
