@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('fotos', function (Blueprint $table) {
             $table->id();
-            $table->string('path'); //ruta de la img
+            $table->string('ruta_imagen'); //ruta de la img
             // Clave foránea hacia la tabla 'restaurants'
             $table->unsignedBigInteger('restaurant_id');
             $table->foreign('restaurant_id')->references('id')->on('restaurantes')->onDelete('cascade');
