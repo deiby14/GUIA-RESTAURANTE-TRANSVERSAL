@@ -15,9 +15,16 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        $this->call([
+            RolesTableSeeder::class,
+            UsuariosTableSeeder::class,
+        ]);
+
+        // Cambiamos 'admin' por 1 que es el ID del rol admin
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'rol_id' => 1, // ID del rol admin (número, no string)
         ]);
     }
 }
