@@ -15,16 +15,16 @@ class UsuariosTableSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Administrador',
-            'email' => 'adminnn@admin.com',
-            'password' => Hash::make('password123'),
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('qweQWE123'),
             'rol_id' => 1, // ID del rol admin
         ]);
 
         User::create([
-            'name' => 'Usuario Normal',
-            'email' => 'usuario@example.com',
-            'password' => Hash::make('password123'),
+            'name' => 'Kilian',
+            'email' => 'kilian@gamil.com',
+            'password' => Hash::make('qweQWE123'),
             'rol_id' => 2, // ID del rol user
         ]);
     }
