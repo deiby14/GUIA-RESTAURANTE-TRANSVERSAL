@@ -34,7 +34,11 @@
 
             <!-- Botón de Envío -->
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+            <a href="{{ route('register') }}" class="btn btn-primary">Registrarse</a>
+
         </form>
+       
     </div>
+
 </body>
 </html>
