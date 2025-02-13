@@ -8,6 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Estilos personalizados para la navbar */
+        body{
+            background-size: cover; 
+            background-position: center; 
+            background: fixed; 
+            height:100vh; 
+            overflow: hidden;
+        }
         .navbar-custom {
             background-color: #fff; /* Fondo blanco */
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra negra suave */
@@ -59,35 +66,43 @@
         .izquierda, .derecha {
             padding: 20px; /* Espaciado interno */
         }
+        .btn-hover-grey:hover {
+            background-color: #e0e0e0; /* Un gris un poco más oscuro */
+            color: #000; /* Cambiar el color del texto */
+            border: 1px solid #ccc; /* Agregar un borde */
+        }
+        .navbar-nav {
+            margin-top: 3px; /* Margen superior */
+            margin-bottom: 4px; /* Margen inferior */
+        }
     </style>
 </head>
 <body style="background-image: url('https://d3h1lg3ksw6i6b.cloudfront.net/media/image/2024/11/27/895aed517c4f48f48cf4796594772418_1214557_pro_3.jpg'); background-size: cover; background-position: center; background: fix; height:100vh;">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
-        <div class="container-fluid">
-            <!-- Logotipo -->
-            <a class="navbar-brand">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="d-inline-block align-text-top">
-            </a>
-            <!-- Botón de collapse para pantallas pequeñas -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Contenido de la navbar -->
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
+<nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+    <div class="container-fluid">
+        <!-- Logotipo -->
+        <a class="navbar-brand">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo" class="d-inline-block align-text-top">
+        </a>
+        <!-- Botón de collapse para pantallas pequeñas -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Contenido de la navbar -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                @if(auth()->check())
+                    <li class="nav-item mt-2 mb-2">
+                        <a href="{{ route('restaurantes.index') }}" class="btn btn-hover-grey" style="margin-right: 10px;">Restaurantes</a>
+                    </li>
+                    <li class="nav-item mt-2 mb-2">
+                        <a href="{{ route('favorites.index') }}" class="btn btn-hover-grey">Favoritos</a>
+                    </li>
+                @endif
 
-                    @if(auth()->check())
-                        <li class="nav-item">
-                            <a href="{{ route('restaurantes.index') }}" class="nav-button">Restaurantes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('favorites.index') }}" class="nav-button">Favoritos</a>
-                        </li>
-                    @endif
-
-                    <!-- Mostrar botón de Iniciar Sesión o icono de usuario -->
-                    @if(auth()->check())
+                <!-- Mostrar botón de Iniciar Sesión o icono de usuario -->
+                @if(auth()->check())
                     <!-- Icono del usuario y nombre -->
                     <li class="nav-item">
                         <a class="nav-link user-icon" href="#" style="display: flex; align-items: center;">
@@ -103,10 +118,10 @@
                         <a href="{{ route('login') }}" class="btn btn-danger" style="border-radius: 25px; padding: 10px 20px;">Iniciar Sesión</a>
                     </li>
                 @endif
-                </ul>
-            </div>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Resto del contenido de la página -->
     <div class="container-grid">
