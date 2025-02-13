@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait
+use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait para validación
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    use ValidatesRequests; // Usa el trait
+    use ValidatesRequests; // Usa el trait para validación
 
     /**
      * Muestra el formulario de inicio de sesión.
@@ -18,7 +18,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login'); 
+        return view('auth.login'); // Asegúrate de tener una vista llamada 'login.blade.php'
     }
 
     /**
@@ -29,10 +29,16 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validar los datos del formulario de login
+        // Validar los datos del formulario
         $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6',
+            'email' => 'required|email', // El campo email es obligatorio y debe ser un formato de correo electrónico válido
+            'password' => 'required|string|min:6', // El campo password es obligatorio, debe ser una cadena y tener al menos 6 caracteres
+        ], [
+            // Mensajes personalizados de error
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'Por favor, ingresa un correo electrónico válido.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
         // Intentar autenticar al usuario

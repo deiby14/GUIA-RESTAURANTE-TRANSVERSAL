@@ -18,6 +18,3 @@ Route::post('login', [LoginController::class, 'login']);
 // Ruta para cerrar sesión
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');  
 
-Route::middleware('auth')->group(function () {
-    Route::get('/restaurants', [App\Http\Controllers\RestaurantController::class, 'index'])->name('restaurants.index');
-});
