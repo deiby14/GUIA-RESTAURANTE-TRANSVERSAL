@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesTableSeeder::class,
             UsuariosTableSeeder::class,
+            RestaurantesTableSeeder::class,
+            ValoracionesTableSeeder::class,
+            FotosTableSeeder::class,
         ]);
 
         // Cambiamos 'admin' por 1 que es el ID del rol admin
