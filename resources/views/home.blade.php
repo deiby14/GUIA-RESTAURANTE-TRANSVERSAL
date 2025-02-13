@@ -76,13 +76,13 @@
             <!-- Contenido de la navbar -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
-                    
+
                     @if(auth()->check())
                         <li class="nav-item">
-                            <a href="{{ route('restaurants.index') }}" class="nav-button">Restaurantes</a>
+                            {{-- <a href="{{ route('restaurants.index') }}" class="nav-button">Restaurantes</a> --}}
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('favorites.index') }}" class="nav-button">Favoritos</a>
+                            {{-- <a href="{{ route('favorites.index') }}" class="nav-button">Favoritos</a> --}}
                         </li>
                     @endif
 
