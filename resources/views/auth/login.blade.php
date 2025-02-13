@@ -12,12 +12,12 @@
         <form method="POST" action="{{ route('login') }}" novalidate> 
             @csrf
 
-            <!-- Campo de Correo Electrónico -->
+            <!-- Campo de Nombre de Usuario -->
             <div class="mb-3">
-                <label for="email" class="form-label">Correo Electrónico</label>
-                <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="correo@gmail.com" value="{{ old('email') }}">
-                <!-- Mostrar error debajo del campo -->
-                @error('email')
+                <label for="name" class="form-label">Nombre de Usuario</label>
+                <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" 
+                       placeholder="Tu nombre de usuario" value="{{ old('name') }}">
+                @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
@@ -25,8 +25,8 @@
             <!-- Campo de Contraseña -->
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
-                <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="Introduce su contraseña">
-                <!-- Mostrar error debajo del campo -->
+                <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" 
+                       placeholder="Introduce tu contraseña">
                 @error('password')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -35,10 +35,7 @@
             <!-- Botón de Envío -->
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
             <a href="{{ route('register') }}" class="btn btn-primary">Registrarse</a>
-
         </form>
-       
     </div>
-
 </body>
 </html>
