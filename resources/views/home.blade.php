@@ -79,27 +79,30 @@
 
                     @if(auth()->check())
                         <li class="nav-item">
-                            {{-- <a href="{{ route('restaurants.index') }}" class="nav-button">Restaurantes</a> --}}
+                            <a href="{{ route('restaurantes.index') }}" class="nav-button">Restaurantes</a>
                         </li>
                         <li class="nav-item">
-                            {{-- <a href="{{ route('favorites.index') }}" class="nav-button">Favoritos</a> --}}
+                            <a href="{{ route('favorites.index') }}" class="nav-button">Favoritos</a>
                         </li>
                     @endif
 
                     <!-- Mostrar botón de Iniciar Sesión o icono de usuario -->
                     @if(auth()->check())
-                        <!-- Icono del usuario -->
-                        <li class="nav-item">
-                            <a class="nav-link user-icon" href="#">
-                                <img src="https://via.placeholder.com/40x40" alt="Usuario" class="rounded-circle" style="max-height: 40px;">
-                            </a>
-                        </li>
-                    @else
-                        <!-- Botón de Iniciar Sesión -->
-                        <li class="nav-item">
-                            <a href="{{ route('login') }}" class="btn btn-danger" style="border-radius: 25px; padding: 10px 20px;">Iniciar Sesión</a>
-                        </li>
-                    @endif
+                    <!-- Icono del usuario y nombre -->
+                    <li class="nav-item">
+                        <a class="nav-link user-icon" href="#" style="display: flex; align-items: center;">
+                            <!-- Imagen del usuario -->
+                            <img src="{{ asset('img/user.webp') }}" alt="Usuario" class="rounded-circle" style="max-height: 40px;">
+                            <!-- Nombre del usuario -->
+                            <span style="margin-left: 10px;">{{ auth()->user()->name }}</span>
+                        </a>
+                    </li>
+                @else
+                    <!-- Botón de Iniciar Sesión -->
+                    <li class="nav-item">
+                        <a href="{{ route('login') }}" class="btn btn-danger" style="border-radius: 25px; padding: 10px 20px;">Iniciar Sesión</a>
+                    </li>
+                @endif
                 </ul>
             </div>
         </div>
