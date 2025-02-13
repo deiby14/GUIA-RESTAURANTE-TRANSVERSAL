@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait para validación
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    use ValidatesRequests; // Usa el trait para validación
+    use ValidatesRequests;
 
     /**
      * Muestra el formulario de inicio de sesión.
@@ -18,7 +18,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login'); // Asegúrate de tener una vista llamada 'login.blade.php'
+        return view('auth.login');
     }
 
     /**
@@ -31,26 +31,24 @@ class LoginController extends Controller
     {
         // Validar los datos del formulario
         $this->validate($request, [
-            'email' => 'required|email', // El campo email es obligatorio y debe ser un formato de correo electrónico válido
-            'password' => 'required|string|min:6', // El campo password es obligatorio, debe ser una cadena y tener al menos 6 caracteres
+            'name' => 'required|string',
+            'password' => 'required|string|min:6',
         ], [
-            // Mensajes personalizados de error
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'Por favor, ingresa un correo electrónico válido.',
+            'name.required' => 'El nombre de usuario es obligatorio.',
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
         // Intentar autenticar al usuario
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->filled('remember'))) {
-            // Autenticación correcta, redirigir al usuario a la página de restaurantes o donde sea necesario
-            return redirect()->intended(route('restaurants.index'));
+        if (Auth::attempt(['name' => $request->name, 'password' => $request->password], $request->filled('remember'))) {
+            // Autenticación correcta, redirigir al usuario a la vista home.blade.php
+            return redirect()->intended(route('home'));
         }
 
         // Autenticación fallida, volver al formulario de inicio de sesión con un mensaje de error
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no son correctas.',
-        ])->withInput($request->only('email', 'remember'));
+            'name' => 'Las credenciales proporcionadas no son correctas.',
+        ])->withInput($request->only('name', 'remember'));
     }
 
     /**
