@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrar Usuarios</title>
+    <title>Administrar Restaurantes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Administrar Usuarios</h2>
-            <a href="{{ route('users.create') }}" class="btn btn-success">Añadir Usuario</a>
+            <h2>Administrar Restaurantes</h2>
+            <a href="{{ route('restaurantes.create') }}" class="btn btn-success">Añadir Restaurante</a>
         </div>
         
         @if(session('success'))
@@ -24,21 +24,21 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($users as $user)
+                @foreach($restaurantes as $restaurante)
                     <tr>
-                        <td>{{ $user->id }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->rol_id }}</td>
+                        <td>{{ $restaurante->id }}</td>
+                        <td>{{ $restaurante->nombre }}</td>
+                        <td>{{ $restaurante->direccion }}</td>
+                        <td>{{ $restaurante->telefono }}</td>
                         <td>
-                            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-primary">Editar</a>
-                            <form action="{{ route('users.delete', $user->id) }}" method="POST" class="d-inline">
+                            <a href="{{ route('restaurantes.edit', $restaurante->id) }}" class="btn btn-sm btn-primary">Editar</a>
+                            <form action="{{ route('restaurantes.delete', $restaurante->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>

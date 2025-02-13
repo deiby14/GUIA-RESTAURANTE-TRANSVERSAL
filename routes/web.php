@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InicioAdminController;
+use App\Http\Controllers\RestaurantesController;
 
 // Ruta para la página de bienvenida
 Route::get('/', function () {
@@ -25,18 +26,21 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);  
 
-// Rutas protegidas para administración
-Route::middleware(['auth'])->group(function () {
-    Route::get('/inicio-admin', [InicioAdminController::class, 'index'])->name('inicio.admin');
-    
-    // Rutas para gestión de usuarios
-    Route::get('/administrar', [AdminController::class, 'index'])->name('administrar');
-    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('users.edit');
-    Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('users.update');
-    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
+// Rutas de administración
+Route::get('/inicio-admin', [InicioAdminController::class, 'index'])->name('inicio.admin');
+Route::get('/administrar', [AdminController::class, 'index'])->name('administrar');
+Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('users.edit');
+Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('users.update');
+Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
+Route::get('/users/create', [AdminController::class, 'createUser'])->name('users.create');
+Route::post('/users', [AdminController::class, 'storeUser'])->name('users.store');
 
-    // Rutas para restaurantes
-    Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
-});
+// Rutas para restaurantes
+Route::get('/administrar-restaurantes', [RestaurantesController::class, 'index'])->name('administrar.restaurantes');
+Route::get('/restaurantes/{id}/edit', [RestaurantesController::class, 'editRestaurante'])->name('restaurantes.edit');
+Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaurante'])->name('restaurantes.update');
+Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
+Route::get('/restaurantes/create', [RestaurantesController::class, 'createRestaurante'])->name('restaurantes.create');
+Route::post('/restaurantes', [RestaurantesController::class, 'storeRestaurante'])->name('restaurantes.store');
 
 

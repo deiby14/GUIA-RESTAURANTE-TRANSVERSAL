@@ -14,7 +14,7 @@
             <div class="col-md-6 text-center">
                 <a href="{{ route('administrar') }}" class="btn btn-primary btn-lg m-2 w-75">Gestionar Usuarios</a>
                 <br>
-                <a href="#" class="btn btn-success btn-lg m-2 w-75">Gestionar Restaurantes</a>
+                <a href="{{ route('administrar.restaurantes') }}" class="btn btn-success btn-lg m-2 w-75">Gestionar Restaurantes</a>
                 
                 <!-- Botón de cerrar sesión -->
                 <form action="{{ route('logout') }}" method="POST" class="mt-4">
