@@ -6,7 +6,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InicioAdminController;
 use App\Http\Controllers\RestaurantesController;
-use App\Http\Controllers\FavoritesController;
 
 // Ruta para la página de bienvenida
 Route::get('/', function () {

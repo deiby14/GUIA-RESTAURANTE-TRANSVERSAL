@@ -22,8 +22,8 @@ class UsuariosTableSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Usuario Normal',
-            'email' => 'usuario@example.com',
+            'name' => 'Deiby',
+            'email' => 'deibycesar10@gmail.com',
             'password' => Hash::make('password123'),
             'rol_id' => 2, // ID del rol user
         ]);

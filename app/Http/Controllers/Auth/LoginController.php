@@ -30,12 +30,14 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'name' => 'required',
-            'password' => 'required',
+        // Validar los datos del formulario
+        $this->validate($request, [
+            'name' => 'required|string',
+            'password' => 'required|string|min:6',
         ], [
-            'name.required' => 'El nombre de usuario es obligatorio',
-            'password.required' => 'La contraseña es obligatoria',
+            'name.required' => 'El nombre de usuario es obligatorio.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
         if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
@@ -50,6 +52,12 @@ class LoginController extends Controller
             }
 
             return redirect()->intended('home');
+        }
+
+        // Intentar autenticar al usuario
+        if (Auth::attempt(['name' => $request->name, 'password' => $request->password], $request->filled('remember'))) {
+            // Autenticación correcta, redirigir al usuario a la vista home.blade.php
+            return redirect()->intended(route('home'));
         }
 
         return back()->withErrors([
