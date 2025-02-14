@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol_id',
     ];
 
     /**
@@ -44,5 +45,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);  //un user pertenece a un rol
+    }
+
+    public function valoracion()
+    {
+        return $this->hasMany(Valoracion::class); //un user tiene muchas valoraciones
     }
 }
