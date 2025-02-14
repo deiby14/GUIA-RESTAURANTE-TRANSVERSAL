@@ -17,3 +17,4 @@ class FotoFactory extends Factory
         ];
     }
 }
+

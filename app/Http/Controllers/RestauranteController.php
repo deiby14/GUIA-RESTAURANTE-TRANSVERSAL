@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Restaurante;
 use Illuminate\Http\Request;
 
 class RestauranteController extends Controller
@@ -14,6 +14,7 @@ class RestauranteController extends Controller
     public function index()
     {
         // Lógica para obtener la lista de restaurantes
-        return view('restaurantes.index'); // Asegúrate de tener una vista llamada 'restaurants/index.blade.php'
+        $restaurantes = Restaurante::with('fotos')->get();
+        return view('restaurantes.index', compact('restaurantes'));
     }
 }

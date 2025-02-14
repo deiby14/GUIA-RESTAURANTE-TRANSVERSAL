@@ -21,13 +21,3 @@ Route::post('login', [LoginController::class, 'login']);
 
 // Ruta para cerrar sesión
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');  
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-// Ruta para la lista de restaurantes
-Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
-
-// Ruta para la lista de favoritos
-Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-
-Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
