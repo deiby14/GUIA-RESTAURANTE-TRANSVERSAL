@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\FavoriteController;
 
+
 // Ruta para la página de bienvenida
 Route::get('/', function () {
     return view('home'); // Cambia 'home' por el nombre de tu vista 
@@ -28,3 +29,5 @@ Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('rest
 
 // Ruta para la lista de favoritos
 Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+
+Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
