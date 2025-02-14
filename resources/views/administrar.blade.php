@@ -5,12 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Usuarios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para la navbar */
+        .navbar-custom {
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand img {
+            max-height: 40px;
+        }
+        .user-icon {
+            cursor: pointer;
+        }
+        .btn-hover-grey:hover {
+            background-color: #e0e0e0;
+            color: #000;
+            border: 1px solid #ccc;
+        }
+
+        /* Estilos para los botones del CRUD */
+        .btn-outline-custom {
+            color: #000;
+            background-color: transparent;
+            border: 2px solid #dc3545;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Para el botón de eliminar */
+        .btn-outline-danger {
+            color: #dc3545;
+            background-color: transparent;
+            border: 2px solid #dc3545;
+        }
+
+        .btn-outline-danger:hover {
+            color: #fff;
+            background-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+        <div class="container-fluid">
+            <!-- Logotipo -->
+            <a class="navbar-brand">
+                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="d-inline-block align-text-top">
+            </a>
+            <!-- Botón de collapse para pantallas pequeñas -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Contenido de la navbar -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    @if(auth()->check())
+                        <li class="nav-item mt-2 mb-2">
+                            <a href="{{ route('administrar.restaurantes') }}" class="btn btn-hover-grey" style="margin-right: 10px;">Restaurantes</a>
+                        </li>
+                       
+                    @endif
+
+                    @if(auth()->check())
+                        <li class="nav-item">
+                            <a class="nav-link user-icon" href="#" style="display: flex; align-items: center;">
+                                <img src="{{ asset('img/user.webp') }}" alt="Usuario" class="rounded-circle" style="max-height: 40px;">
+                                <span style="margin-left: 10px;">{{ auth()->user()->name }}</span>
+                            </a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a href="{{ route('login') }}" class="btn btn-danger" style="border-radius: 25px; padding: 10px 20px;">Iniciar Sesión</a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Administrar Usuarios</h2>
-            <a href="{{ route('users.create') }}" class="btn btn-success">Añadir Usuario</a>
+            <button type="button" class="btn btn-outline-custom" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                Añadir Usuario
+            </button>
         </div>
         
         @if(session('success'))
@@ -37,23 +120,129 @@
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->rol_id }}</td>
                         <td>
-                            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-primary">Editar</a>
-                            <form action="{{ route('users.delete', $user->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
-                            </form>
+                            <button class="btn btn-sm btn-outline-custom" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ $user->id }}">
+                                Eliminar
+                            </button>
                         </td>
                     </tr>
+
+                    <!-- Modal de Edición para cada usuario -->
+                    <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editar Usuario</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('users.update', $user->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="mb-3">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" name="name" value="{{ $user->name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" name="email" value="{{ $user->email }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Contraseña (dejar en blanco para mantener la actual)</label>
+                                            <input type="password" class="form-control" name="password">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Rol</label>
+                                            <select class="form-control" name="rol_id" required>
+                                                @foreach($roles as $rol)
+                                                    <option value="{{ $rol->id }}" {{ $user->rol_id == $rol->id ? 'selected' : '' }}>
+                                                        {{ $rol->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-custom">Actualizar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal de Eliminación -->
+                    <div class="modal fade" id="deleteUserModal{{ $user->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Estás seguro que quieres eliminar al usuario <strong>{{ $user->name }}</strong>?</p>
+                                    <p class="text-danger">Esta acción no se puede deshacer.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ route('users.delete', $user->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
             </tbody>
         </table>
 
+        <!-- Modal de Creación -->
+        <div class="modal fade" id="createUserModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Añadir Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('users.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" name="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Rol</label>
+                                <select class="form-control" name="rol_id" required>
+                                    @foreach($roles as $rol)
+                                        <option value="{{ $rol->id }}">{{ $rol->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-outline-custom">Crear</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Botón de cerrar sesión -->
-        <form action="{{ route('logout') }}" method="POST" class="mt-3">
+        <form action="{{ route('logout') }}" method="POST" class="mt-4">
             @csrf
             <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
         </form>
     </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 
