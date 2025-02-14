@@ -26,7 +26,7 @@ class FotosTableSeeder extends Seeder
         
         Foto::create([
             'restaurante_id' => 2,
-            'ruta_imagen' => 'storage/images/restaurantes/sitio-sushi.jpg'
+            'ruta_imagen' => 'storage/images/restaurantes/sitio-suhi.jpg'
         ]);
         Foto::create([
             'restaurante_id' => 2,
