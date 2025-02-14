@@ -42,11 +42,11 @@ Route::post('register', [RegisterController::class, 'register']);
 // Rutas de administración
 Route::get('/inicio-admin', [InicioAdminController::class, 'index'])->name('inicio.admin');
 Route::get('/administrar', [AdminController::class, 'index'])->name('administrar');
-Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('users.edit');
-Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('users.update');
-Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
 Route::get('/users/create', [AdminController::class, 'createUser'])->name('users.create');
-Route::post('/users', [AdminController::class, 'storeUser'])->name('users.store');
+Route::post('/users', [AdminController::class, 'store'])->name('users.store');
+Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('users.edit');
+Route::put('/users/{id}', [AdminController::class, 'update'])->name('users.update');
+Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.delete');
 
 // Rutas de restaurantes
 Route::get('/administrar-restaurantes', [RestaurantesController::class, 'index'])->name('administrar.restaurantes');
