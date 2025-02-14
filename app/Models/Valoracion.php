@@ -8,6 +8,15 @@ class Valoracion extends Model
 {
     use HasFactory;
 
+    protected $table = 'valoraciones';
+
+    protected $fillable = [
+        'user_id',
+        'restaurante_id',
+        'puntuación',
+        'comentario'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);  //una valoracion pertenece a un usuario

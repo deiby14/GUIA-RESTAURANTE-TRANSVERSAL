@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait para validación
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
 
 class LoginController extends Controller
 {
-    use ValidatesRequests;
+    use ValidatesRequests; // Usa el trait para validación
 
     /**
      * Muestra el formulario de inicio de sesión.
@@ -18,7 +19,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('auth.login'); // Asegúrate de tener una vista llamada 'login.blade.php'
     }
 
     /**
@@ -39,16 +40,29 @@ class LoginController extends Controller
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
+        if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
+            $request->session()->regenerate();
+            
+            // Obtener el rol del usuario
+            $role = Role::find(Auth::user()->rol_id);
+            
+            // Redirigir según el nombre del rol
+            if ($role && $role->name === 'admin') {
+                return redirect()->route('inicio.admin');
+            }
+
+            return redirect()->intended('home');
+        }
+
         // Intentar autenticar al usuario
         if (Auth::attempt(['name' => $request->name, 'password' => $request->password], $request->filled('remember'))) {
             // Autenticación correcta, redirigir al usuario a la vista home.blade.php
             return redirect()->intended(route('home'));
         }
 
-        // Autenticación fallida, volver al formulario de inicio de sesión con un mensaje de error
         return back()->withErrors([
-            'name' => 'Las credenciales proporcionadas no son correctas.',
-        ])->withInput($request->only('name', 'remember'));
+            'name' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+        ])->withInput($request->only('name'));
     }
 
     /**
@@ -67,6 +81,6 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         // Redirigir al usuario a la página de inicio
-        return redirect()->route('home');
+        return redirect('/');
     }
 }
