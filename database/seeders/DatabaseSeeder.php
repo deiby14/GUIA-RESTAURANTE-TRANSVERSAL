@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Restaurante; 
+use App\Models\Foto;        
+use App\Models\User;        
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,14 +14,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Llama a otros seeders si es necesario
         $this->call([
             RolesTableSeeder::class,
             UsuariosTableSeeder::class,
         ]);
 
-        // Cambiamos 'admin' por 1 que es el ID del rol admin
+        Restaurante::factory(50)->create()->each(function ($restaurante) {
+            Foto::factory(rand(1, 3))->create(['restaurante_id' => $restaurante->id]);
+        });
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
