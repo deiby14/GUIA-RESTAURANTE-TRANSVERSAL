@@ -35,6 +35,8 @@ Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('rest
 Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
 
+
+
 // Rutas nuevas para registro
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);  

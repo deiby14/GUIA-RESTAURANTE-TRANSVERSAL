@@ -18,9 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesTableSeeder::class,
             UsuariosTableSeeder::class,
-            RestaurantesTableSeeder::class,
             ValoracionesTableSeeder::class,
-            FotosTableSeeder::class,
         ]);
 
         Restaurante::factory(50)->create()->each(function ($restaurante) {
