@@ -72,6 +72,15 @@
                 margin-top: 3px; /* Margen superior */
                 margin-bottom: 4px; /* Margen inferior */
             }
+            .btn-outline-danger {
+                color: #dc3545;
+                border: 2px solid #dc3545;
+                transition: all 0.3s ease;
+            }
+            .btn-outline-danger:hover {
+                color: white;
+                background-color: #dc3545;
+            }
         </style>
 </head>
 <body>
@@ -98,11 +107,17 @@
                     @endif
     
                     @if(auth()->check())
-                        <li class="nav-item">
-                            <a class="nav-link user-icon" href="#" style="display: flex; align-items: center;">
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link user-icon me-3" href="#" style="display: flex; align-items: center;">
                                 <img src="{{ asset('img/user.webp') }}" alt="Usuario" class="rounded-circle" style="max-height: 40px;">
                                 <span style="margin-left: 10px;">{{ auth()->user()->name }}</span>
                             </a>
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-danger" style="border-radius: 25px; padding: 8px 20px;">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
                         </li>
                     @else
                         <li class="nav-item">

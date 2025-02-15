@@ -73,11 +73,17 @@
                     @endif
 
                     @if(auth()->check())
-                        <li class="nav-item">
-                            <a class="nav-link user-icon" href="#" style="display: flex; align-items: center;">
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link user-icon me-3" href="#" style="display: flex; align-items: center;">
                                 <img src="{{ asset('img/user.webp') }}" alt="Usuario" class="rounded-circle" style="max-height: 40px;">
                                 <span style="margin-left: 10px;">{{ auth()->user()->name }}</span>
                             </a>
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-danger" style="border-radius: 25px; padding: 8px 20px;">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
                         </li>
                     @else
                         <li class="nav-item">
@@ -92,7 +98,7 @@
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Administrar Restaurantes</h2>
-            <a href="{{ route('restaurantes.create') }}" class="btn btn-outline-custom">Añadir Restaurante</a>
+            <a href="{{ route('restaurantes.create') }}" class="btn btn-success">Añadir Restaurante</a>
         </div>
         
         @if(session('success'))
@@ -119,11 +125,11 @@
                         <td>{{ $restaurante->direccion }}</td>
                         <td>{{ $restaurante->telefono }}</td>
                         <td>
-                            <a href="{{ route('restaurantes.edit', $restaurante->id) }}" class="btn btn-sm btn-outline-custom">Editar</a>
+                            <a href="{{ route('restaurantes.edit', $restaurante->id) }}" class="btn btn-sm btn-primary">Editar</a>
                             <form action="{{ route('restaurantes.delete', $restaurante->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
                             </form>
                         </td>
                     </tr>
