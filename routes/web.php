@@ -59,10 +59,7 @@ Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteResta
 
 Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');
 
-Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'show'])->name('restaurantes.show');
-Route::post('/restaurantes/{restaurante}/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
-Route::put('/comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update');
-Route::delete('/comentarios/{comentario}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/restaurantes/{restaurante}/valoraciones', [ValoracionController::class, 'store'])->name('valoraciones.store');
@@ -71,4 +68,5 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/valoraciones/{valoracion}/reset', [ValoracionController::class, 'reset'])->name('valoraciones.reset');
     Route::get('/administrar', [AdminController::class, 'index'])->name('administrar');
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.delete');
+    Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'show'])->name('restaurantes.show');
 });

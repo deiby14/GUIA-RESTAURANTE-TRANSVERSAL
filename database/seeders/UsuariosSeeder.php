@@ -7,13 +7,11 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class UsuariosTableSeeder extends Seeder
+class UsuariosSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // Crea un usuario administrador
         User::create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
@@ -21,9 +19,10 @@ class UsuariosTableSeeder extends Seeder
             'rol_id' => 1, // ID del rol admin
         ]);
 
+        // Crea un usuario normal
         User::create([
             'name' => 'Kilian',
-            'email' => 'kilian@gamil.com',
+            'email' => 'kilian@gmail.com', // Corrección: gmail -> gmail
             'password' => Hash::make('qweQWE123'),
             'rol_id' => 2, // ID del rol user
         ]);

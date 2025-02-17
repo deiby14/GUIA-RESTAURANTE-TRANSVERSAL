@@ -48,6 +48,17 @@
             color: #fff;
             background-color: #dc3545;
         }
+
+        /* mensajes de error */
+        .error {
+        color: red;
+        font-size: 14px;
+        display: block; /* Hace que el mensaje aparezca en una nueva línea */
+        margin-top: 5px; /* Espaciado para que no quede pegado al input */
+        }
+        .is-invalid {
+            border: 1px solid red; /* Resalta el campo con un borde rojo */
+        }
     </style>
 </head>
 <body>
@@ -149,15 +160,18 @@
                                         @method('PUT')
                                         <div class="mb-3">
                                             <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" name="name" value="{{ $user->name }}" >
+                                            <input type="text" class="form-control" name="name" id="name2-{{ $user->id }}" onblur="validarNombre2(this, '{{ $user->id }}')" value="{{ $user->name }}">
+                                            <span class="error" id="errorName2-{{ $user->id }}"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" name="email" value="{{ $user->email }}" >
+                                            <input type="text" class="form-control" name="email" id="email2-{{ $user->id }}" onblur="validarEmail2(this, '{{ $user->id }}')" value="{{ $user->email }}">
+                                            <span class="error" id="errorEmail2-{{ $user->id }}"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Contraseña (dejar en blanco para mantener la actual)</label>
-                                            <input type="password" class="form-control" name="password">
+                                            <input type="password" class="form-control" name="password" id="password2-{{ $user->id }}" onblur="validarPassword2(this, '{{ $user->id }}')">
+                                            <span class="error" id="errorPassword2-{{ $user->id }}"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Rol</label>
@@ -169,7 +183,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <button type="submit" class="btn btn-outline-custom">Actualizar</button>
+                                        <button type="submit" class="btn btn-outline-custom" id="edit_submit-{{ $user->id }}">Actualizar</button>
                                     </form>
                                 </div>
                             </div>
@@ -225,25 +239,28 @@
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" name="name" >
+                                <input type="text" class="form-control" name="name" id="name" onblur="validarNombre(this)">
+                                <span class="error" id="errorName"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" >
+                                <input type="text" class="form-control" name="email" id="email" onblur="validarEmail(this)">
+                                <span class="error" id="errorEmail"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" name="password" >
+                                <input type="password" class="form-control" name="password" id="password" onblur="validarPassword(this)">
+                                <span class="error" id="errorPassword"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Rol</label>
-                                <select class="form-control" name="rol_id" >
+                                <select class="form-control" name="rol_id" id="rol">
                                     @foreach($roles as $rol)
                                         <option value="{{ $rol->id }}">{{ $rol->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-outline-custom">Crear</button>
+                            <button type="submit" class="btn btn-outline-custom" id="create_submit" >Crear</button>
                         </form>
                     </div>
                 </div>
@@ -259,5 +276,7 @@
 
     <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- JS --}}
+    <script src="{{ asset('js/validations_usr_crud.js') }}"></script>
 </body>
 </html> 

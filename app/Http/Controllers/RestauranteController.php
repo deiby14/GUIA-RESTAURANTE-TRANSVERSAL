@@ -75,6 +75,14 @@ class RestauranteController extends Controller
 
     public function show(Restaurante $restaurante)
     {
-        return view('restaurantes.show', compact('restaurante'));
+        // Obtener las valoraciones del restaurante con sus usuarios
+        $valoraciones = $restaurante->valoraciones()->with('user')->get();
+        
+        // Si el usuario está autenticado, obtener su valoración
+        $miValoracion = auth()->check() 
+            ? $restaurante->valoraciones()->where('user_id', auth()->id())->first() 
+            : null;
+
+        return view('restaurantes.show', compact('restaurante', 'valoraciones', 'miValoracion'));
     }
 }

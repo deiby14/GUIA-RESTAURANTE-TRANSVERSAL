@@ -7,18 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 class Restaurante extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'direccion',
+        'precio_medio',
+        'tipocomida_id',
+        'ciudad_id',
+    ];
+    
     public function fotos()
     {
-        return $this->hasMany(Foto::class);    //un restaurante tiene muchas fotos
+        return $this->hasMany(Foto::class);  
     }
 
     public function valoraciones()
     {
         return $this->hasMany(Valoracion::class);  //un restaurante tiene muchas valoraciones
-    }
-
-    public function comentarios()
-    {
-        return $this->hasMany(Comentario::class);
     }
 }
