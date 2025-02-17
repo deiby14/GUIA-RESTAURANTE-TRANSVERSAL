@@ -55,3 +55,5 @@ Route::post('/restaurantes', [RestaurantesController::class, 'storeRestaurante']
 Route::get('/restaurantes/{id}/edit', [RestaurantesController::class, 'editRestaurante'])->name('restaurantes.edit');
 Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaurante'])->name('restaurantes.update');
 Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
+
+Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');
