@@ -52,8 +52,13 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);  //un user pertenece a un rol
     }
 
-    public function valoracion()
+    public function valoraciones()
     {
-        return $this->hasMany(Valoracion::class); //un user tiene muchas valoraciones
+        return $this->hasMany(Valoracion::class);
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Restaurante::class, 'favorites', 'user_id', 'restaurante_id');
     }
 }

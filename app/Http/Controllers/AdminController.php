@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -60,8 +62,36 @@ class AdminController extends Controller
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
-        return redirect()->route('administrar')->with('success', 'Usuario eliminado correctamente');
+        Log::info('Intentando eliminar usuario con ID: ' . $id); // Para debugging
+
+        try {
+            $user = User::findOrFail($id);
+            
+            // Verificar si es el admin principal
+            if ($user->rol_id === 1 && $user->name === 'Admin') {
+                return redirect()->route('administrar')
+                    ->with('error', 'No se puede eliminar al administrador principal');
+            }
+
+            // Eliminar relaciones primero
+            $user->valoraciones()->delete();
+            $user->favorites()->detach();
+            
+            // Eliminar el usuario
+            $deleted = $user->delete();
+
+            if ($deleted) {
+                return redirect()->route('administrar')
+                    ->with('success', 'Usuario eliminado correctamente');
+            } else {
+                return redirect()->route('administrar')
+                    ->with('error', 'No se pudo eliminar el usuario');
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar usuario: ' . $e->getMessage()); // Para debugging
+            return redirect()->route('administrar')
+                ->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
+        }
     }
 }

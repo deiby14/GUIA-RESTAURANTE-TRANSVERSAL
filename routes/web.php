@@ -69,4 +69,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/valoraciones/{valoracion}', [ValoracionController::class, 'update'])->name('valoraciones.update');
     Route::delete('/valoraciones/{valoracion}', [ValoracionController::class, 'destroy'])->name('valoraciones.destroy');
     Route::put('/valoraciones/{valoracion}/reset', [ValoracionController::class, 'reset'])->name('valoraciones.reset');
+    Route::get('/administrar', [AdminController::class, 'index'])->name('administrar');
+    Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.delete');
 });
