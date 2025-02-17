@@ -35,11 +35,9 @@ Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('rest
 Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
 
-
-
-// Rutas nuevas para registro
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('register', [RegisterController::class, 'register']);  
+// Rutas de autenticación
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
 // Rutas de administración
 Route::get('/inicio-admin', [InicioAdminController::class, 'index'])->name('inicio.admin');
@@ -57,3 +55,5 @@ Route::post('/restaurantes', [RestaurantesController::class, 'storeRestaurante']
 Route::get('/restaurantes/{id}/edit', [RestaurantesController::class, 'editRestaurante'])->name('restaurantes.edit');
 Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaurante'])->name('restaurantes.update');
 Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
+
+Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');

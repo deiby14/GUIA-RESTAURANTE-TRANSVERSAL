@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait para validación
+use Illuminate\Foundation\Validation\ValidatesRequests; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
@@ -19,7 +19,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login'); // Asegúrate de tener una vista llamada 'login.blade.php'
+        return view('auth.login'); 
     }
 
     /**
@@ -61,7 +61,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'name' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+            'name' => 'El usuario o contraseña no coinciden en nuestros registros.',
         ])->withInput($request->only('name'));
     }
 
