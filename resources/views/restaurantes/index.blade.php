@@ -162,11 +162,13 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <!-- Mostrar la primera imagen si existe -->
-                        @if ($restaurante->fotos->isNotEmpty())
-                            <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
+                        @if ($restaurante->fotos && $restaurante->fotos->isNotEmpty())
+                        <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
                         @else
-                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="{{ $restaurante->nombre }}">
+                            <!-- Mostrar una imagen por defecto si no hay fotos -->
+                            <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
                         @endif
+        
                         <div class="card-body">
                             <h5 class="card-title">{{ $restaurante->nombre }}</h5>
                             <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
