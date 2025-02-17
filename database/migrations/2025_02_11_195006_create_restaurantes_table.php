@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->text('descripcion');
-            $table->string('direccion');
-            $table->text('precio_medio');
+            $table->string('dirección');
+            $table->decimal('precio_medio', 8, 2);
             $table->string('tipo_cocina');
             $table->timestamps();
         });
