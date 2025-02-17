@@ -17,9 +17,10 @@ class RestauranteFactory extends Factory
             'nombre' => $this->faker->company, // Nombre del restaurante
             'descripcion' => $this->faker->paragraph, // Descripción ficticia
             'dirección' => $this->faker->address, // Dirección ficticia
-            'precio_medio' => $this->faker->randomFloat(2, 10, 100), // Precio medio entre 10 y 100
+            'precio_medio' => '$' . str_repeat('$', $this->faker->numberBetween(1, 3)), // Genera precios como $$ o $$$
             'ciudad_id' => \App\Models\Ciudad::factory(),
             'tipocomida_id' => \App\Models\Tipocomida::factory(),
+
         ];
     }
 }

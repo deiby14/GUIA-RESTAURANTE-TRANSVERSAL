@@ -15,7 +15,7 @@
                     <img src="{{ $restaurant->image }}" class="card-img-top" alt="{{ $restaurant->name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $restaurant->name }}</h5>
-                        <p class="card-text">{{ Str::limit($restaurant->description, 100) }}</p>
+                        <p class="card-text">{{ Str::limit($restaurante->description, 100) }}</p>
                         <p>Precio medio: {{ $restaurant->average_price }} €</p>
                         <p>Tipo de cocina: {{ $restaurant->cuisine_type }}</p>
                     </div>

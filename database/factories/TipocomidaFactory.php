@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TipocomidaFactory extends Factory
 {
-    protected $model = Tipocomida::class;
+    public $model = Tipocomida::class;
 
     public function definition()
     {

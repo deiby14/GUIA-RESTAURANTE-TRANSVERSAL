@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ValoracionFactory extends Factory
 {
-    protected $model = Valoracion::class;
+    public $model = Valoracion::class;
 
     public function definition()
     {

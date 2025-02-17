@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FotoFactory extends Factory
 {
-    protected $model = Foto::class;
+    public $model = Foto::class;
 
     public function definition()
     {
