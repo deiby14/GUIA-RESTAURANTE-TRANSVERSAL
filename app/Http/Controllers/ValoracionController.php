@@ -54,11 +54,14 @@ class ValoracionController extends Controller
     public function destroy(Valoracion $valoracion)
     {
         if ($valoracion->user_id !== auth()->id()) {
-            return back()->with('error', 'No tienes permiso para eliminar esta valoración');
+            return back()->with('error', 'No autorizado');
         }
 
-        $valoracion->delete();
-        return back()->with('success', 'Valoración eliminada correctamente');
+        $valoracion->update([
+            'comentario' => null
+        ]);
+
+        return redirect()->back()->with('success', 'Comentario eliminado');
     }
 
     public function reset(Valoracion $valoracion)

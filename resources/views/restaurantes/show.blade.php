@@ -98,21 +98,26 @@
                             @endfor
                         </div>
                         <div class="comment-section">
-                            <p class="mb-2">{{ $miValoracion->comentario }}</p>
+                            @if($miValoracion->comentario)
+                                <p class="mb-2">{{ $miValoracion->comentario }}</p>
+                            @endif
                             <div class="btn-group">
                                 <button class="btn btn-outline-primary btn-sm edit-valoracion me-2" 
                                         data-valoracion-id="{{ $miValoracion->id }}"
                                         data-comentario="{{ $miValoracion->comentario }}">
                                     <i class="fas fa-edit"></i> Editar comentario
                                 </button>
-                                <form action="{{ route('valoraciones.reset', $miValoracion->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                            onclick="return confirm('¿Estás seguro de que quieres eliminar tu comentario?')">
-                                        <i class="fas fa-trash"></i> Eliminar comentario
-                                    </button>
-                                </form>
+                                @if($miValoracion->comentario)
+                                    <form action="{{ route('valoraciones.destroy', $miValoracion->id) }}" 
+                                          method="POST" 
+                                          style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Eliminar comentario
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -184,18 +189,20 @@
         const stars = document.querySelectorAll('.star-rating');
         const puntuacionInput = document.getElementById('puntuacion');
 
-        stars.forEach(star => {
-            star.addEventListener('mouseover', function() {
-                const rating = this.dataset.rating;
-                highlightStars(rating);
-            });
+        if (stars.length > 0 && puntuacionInput) {
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const rating = this.dataset.rating;
+                    highlightStars(rating);
+                });
 
-            star.addEventListener('click', function() {
-                const rating = this.dataset.rating;
-                puntuacionInput.value = rating;
-                highlightStars(rating);
+                star.addEventListener('click', function() {
+                    const rating = this.dataset.rating;
+                    puntuacionInput.value = rating;
+                    highlightStars(rating);
+                });
             });
-        });
+        }
 
         function highlightStars(rating) {
             stars.forEach(star => {
@@ -203,9 +210,9 @@
             });
         }
 
-        // Manejo del formulario
-        const valoracionForm = document.querySelector('form');
-        if (valoracionForm) {
+        // Manejo del formulario de valoración (no el de eliminación)
+        const valoracionForm = document.querySelector('form:not([action*="destroy"])');
+        if (valoracionForm && document.getElementById('comentario')) {
             valoracionForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -233,7 +240,7 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group mb-3">
-                        <textarea class="form-control" name="comentario">${comentario}</textarea>
+                        <textarea class="form-control" name="comentario">${comentario || ''}</textarea>
                     </div>
                     <button type="submit" class="btn btn-custom btn-sm">
                         <i class="fas fa-save"></i> Guardar

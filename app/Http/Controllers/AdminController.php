@@ -62,36 +62,23 @@ class AdminController extends Controller
 
     public function destroy($id)
     {
-        Log::info('Intentando eliminar usuario con ID: ' . $id); // Para debugging
-
         try {
             $user = User::findOrFail($id);
             
-            // Verificar si es el admin principal
-            if ($user->rol_id === 1 && $user->name === 'Admin') {
-                return redirect()->route('administrar')
-                    ->with('error', 'No se puede eliminar al administrador principal');
+            // Proteger al admin principal
+            if ($user->rol_id === 1 && $user->email === 'admin@gmail.com') {
+                return back()->with('error', 'No se puede eliminar al administrador principal');
             }
 
-            // Eliminar relaciones primero
+            // Eliminar valoraciones
             $user->valoraciones()->delete();
-            $user->favorites()->detach();
             
-            // Eliminar el usuario
-            $deleted = $user->delete();
+            // Eliminar usuario
+            $user->delete();
 
-            if ($deleted) {
-                return redirect()->route('administrar')
-                    ->with('success', 'Usuario eliminado correctamente');
-            } else {
-                return redirect()->route('administrar')
-                    ->with('error', 'No se pudo eliminar el usuario');
-            }
-
+            return redirect()->route('administrar')->with('success', 'Usuario eliminado correctamente');
         } catch (\Exception $e) {
-            Log::error('Error al eliminar usuario: ' . $e->getMessage()); // Para debugging
-            return redirect()->route('administrar')
-                ->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
+            return back()->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
         }
     }
 }

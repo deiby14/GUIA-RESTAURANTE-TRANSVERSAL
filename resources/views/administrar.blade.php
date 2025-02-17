@@ -187,10 +187,19 @@
                                 <div class="modal-body">
                                     <p>¿Estás seguro que quieres eliminar al usuario <strong>{{ $user->name }}</strong>?</p>
                                     <p class="text-danger">Esta acción no se puede deshacer.</p>
+                                    
+                                    @if(session('error'))
+                                        <div class="alert alert-danger">
+                                            {{ session('error') }}
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <form action="{{ route('users.delete', $user->id) }}" method="POST" style="display: inline;">
+                                    <form action="{{ route('users.delete', $user->id) }}" 
+                                          method="POST" 
+                                          style="display: inline;"
+                                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar este usuario?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger">Eliminar</button>

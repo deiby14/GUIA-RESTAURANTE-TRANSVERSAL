@@ -17,6 +17,15 @@ class Valoracion extends Model
         'comentario'
     ];
 
+    protected $attributes = [
+        'comentario' => null
+    ];
+
+    // Asegúrate de que el comentario puede ser null
+    protected $casts = [
+        'comentario' => 'string'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);  //una valoracion pertenece a un usuario
