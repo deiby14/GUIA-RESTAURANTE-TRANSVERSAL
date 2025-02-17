@@ -27,6 +27,15 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+        ], [
+            'name.required' => 'El nombre de usuario es obligatorio',
+            'name.unique' => 'Este nombre de usuario ya está en uso',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.email' => 'El correo electrónico debe ser válido',
+            'email.unique' => 'Este correo electrónico ya está registrado',
+            'password.required' => 'La contraseña es obligatoria',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres',
+            'password.confirmed' => 'Las contraseñas no coinciden'
         ]);
 
         if ($validator->fails()) {
@@ -40,10 +49,9 @@ class RegisterController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'rol_id' => 2, // Asignamos el rol de usuario normal por defecto
+                'rol_id' => 2, 
             ]);
 
-            auth()->login($user);
 
             return redirect()->route('home');
             
