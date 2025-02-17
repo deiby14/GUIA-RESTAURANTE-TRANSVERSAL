@@ -9,6 +9,7 @@ use App\Http\Controllers\RestaurantesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ValoracionController;
 
 
 // Ruta para la página de bienvenida
@@ -57,3 +58,15 @@ Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaura
 Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
 
 Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');
+
+Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'show'])->name('restaurantes.show');
+Route::post('/restaurantes/{restaurante}/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
+Route::put('/comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update');
+Route::delete('/comentarios/{comentario}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/restaurantes/{restaurante}/valoraciones', [ValoracionController::class, 'store'])->name('valoraciones.store');
+    Route::put('/valoraciones/{valoracion}', [ValoracionController::class, 'update'])->name('valoraciones.update');
+    Route::delete('/valoraciones/{valoracion}', [ValoracionController::class, 'destroy'])->name('valoraciones.destroy');
+    Route::put('/valoraciones/{valoracion}/reset', [ValoracionController::class, 'reset'])->name('valoraciones.reset');
+});

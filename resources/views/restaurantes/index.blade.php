@@ -160,34 +160,36 @@
         <div class="row">
             @foreach ($restaurantes as $restaurante)
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <!-- Mostrar la primera imagen si existe -->
-                        @if ($restaurante->fotos->isNotEmpty())
-                            <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                        @else
-                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                        @endif
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $restaurante->nombre }}</h5>
-                            <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
-                            <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
-                            <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_cocina }}</p>
-                            
-                            <!-- Sistema de valoración con estrellas -->
-                            <div class="rating-container">
-                                <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
-                                    <i class="fas fa-star star-rating" data-rating="1"></i>
-                                    <i class="fas fa-star star-rating" data-rating="2"></i>
-                                    <i class="fas fa-star star-rating" data-rating="3"></i>
-                                    <i class="fas fa-star star-rating" data-rating="4"></i>
-                                    <i class="fas fa-star star-rating" data-rating="5"></i>
+                    <a href="{{ route('restaurantes.show', $restaurante->id) }}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <!-- Mostrar la primera imagen si existe -->
+                            @if ($restaurante->fotos->isNotEmpty())
+                                <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
+                            @else
+                                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="{{ $restaurante->nombre }}">
+                            @endif
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $restaurante->nombre }}</h5>
+                                <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
+                                <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
+                                <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_cocina }}</p>
+                                
+                                <!-- Sistema de valoración con estrellas -->
+                                <div class="rating-container">
+                                    <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
+                                        <i class="fas fa-star star-rating" data-rating="1"></i>
+                                        <i class="fas fa-star star-rating" data-rating="2"></i>
+                                        <i class="fas fa-star star-rating" data-rating="3"></i>
+                                        <i class="fas fa-star star-rating" data-rating="4"></i>
+                                        <i class="fas fa-star star-rating" data-rating="5"></i>
+                                    </div>
+                                    <span class="rating-text">
+                                        Puntuación: {{ isset($userRatings[$restaurante->id]) ? $userRatings[$restaurante->id] : ($restaurante->valoraciones->avg('puntuación') ?? 0) }}/5
+                                    </span>
                                 </div>
-                                <span class="rating-text">
-                                    Puntuación: {{ isset($userRatings[$restaurante->id]) ? $userRatings[$restaurante->id] : ($restaurante->valoraciones->avg('puntuación') ?? 0) }}/5
-                                </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>

@@ -46,7 +46,6 @@ class LoginController extends Controller
             // Obtener el rol del usuario
             $role = Role::find(Auth::user()->rol_id);
             
-            // Redirigir según el nombre del rol
             if ($role && $role->name === 'admin') {
                 return redirect()->route('inicio.admin');
             }
@@ -54,7 +53,6 @@ class LoginController extends Controller
             return redirect()->intended('home');
         }
 
-        // Intentar autenticar al usuario
         if (Auth::attempt(['name' => $request->name, 'password' => $request->password], $request->filled('remember'))) {
             // Autenticación correcta, redirigir al usuario a la vista home.blade.php
             return redirect()->intended(route('home'));

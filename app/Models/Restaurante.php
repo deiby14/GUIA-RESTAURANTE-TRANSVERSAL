@@ -16,4 +16,9 @@ class Restaurante extends Model
     {
         return $this->hasMany(Valoracion::class);  //un restaurante tiene muchas valoraciones
     }
+
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
+    }
 }

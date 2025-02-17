@@ -149,11 +149,11 @@
                                         @method('PUT')
                                         <div class="mb-3">
                                             <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" name="name" value="{{ $user->name }}" required>
+                                            <input type="text" class="form-control" name="name" value="{{ $user->name }}" >
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" name="email" value="{{ $user->email }}" required>
+                                            <input type="email" class="form-control" name="email" value="{{ $user->email }}" >
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Contraseña (dejar en blanco para mantener la actual)</label>
@@ -161,7 +161,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Rol</label>
-                                            <select class="form-control" name="rol_id" required>
+                                            <select class="form-control" name="rol_id">
                                                 @foreach($roles as $rol)
                                                     <option value="{{ $rol->id }}" {{ $user->rol_id == $rol->id ? 'selected' : '' }}>
                                                         {{ $rol->name }}
@@ -216,19 +216,19 @@
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" name="name" required>
+                                <input type="text" class="form-control" name="name" >
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required>
+                                <input type="email" class="form-control" name="email" >
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" name="password" required>
+                                <input type="password" class="form-control" name="password" >
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Rol</label>
-                                <select class="form-control" name="rol_id" required>
+                                <select class="form-control" name="rol_id" >
                                     @foreach($roles as $rol)
                                         <option value="{{ $rol->id }}">{{ $rol->name }}</option>
                                     @endforeach
