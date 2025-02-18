@@ -11,11 +11,9 @@ class Restaurante extends Model
     
     protected $fillable = [
         'nombre',
-        'descripcion',
         'direccion',
         'precio_medio',
-        'tipocomida_id',
-        'ciudad_id',
+        'tipocomida_id'
     ];
     
     public function fotos()
@@ -25,16 +23,11 @@ class Restaurante extends Model
 
     public function valoraciones()
     {
-        return $this->hasMany(Valoracion::class);  
+        return $this->hasMany(Valoracion::class);  //un restaurante tiene muchas valoraciones
     }
 
-    public function tipoComida()
-        {
-            return $this->belongsTo(Tipocomida::class);
-        }
-    
-    public function ciudad()
-        {
-            return $this->belongsTo(Ciudad::class);
-        }
+    public function tipocomida()
+    {
+        return $this->belongsTo(Tipocomida::class);
+    }
 }

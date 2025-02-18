@@ -10,6 +10,6 @@ class Tipocomida extends Model
     // Relación con Restaurantes
     public function restaurantes()
     {
-        return $this->hasMany(Restaurante::class);
+        return $this->hasMany(Restaurante::class, 'tipocomida_id');
     }
 }

@@ -9,10 +9,10 @@ use App\Http\Controllers\RestaurantesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ValoracionController;
 
 
-
-// ✅ Ruta para la página de inicio
+// Ruta para la página de bienvenida
 Route::get('/', function () {
     return view('home'); // Cambia 'home' por el nombre de tu vista 
 })->name('home');
@@ -59,4 +59,22 @@ Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.
 
 // ✅ Ruta para la administración de restaurantes (vista general)
 Route::get('/administrar-restaurantes', [RestaurantesController::class, 'index'])->name('administrar.restaurantes');
+Route::get('/restaurantes/create', [RestaurantesController::class, 'createRestaurante'])->name('restaurantes.create');
+Route::post('/restaurantes', [RestauranteController::class, 'store'])->name('restaurantes.store');
+Route::get('/restaurantes/{id}/edit', [RestaurantesController::class, 'editRestaurante'])->name('restaurantes.edit');
+Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaurante'])->name('restaurantes.update');
+Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
 
+Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');
+
+Route::resource('restaurantes', RestauranteController::class);
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/restaurantes/{restaurante}/valoraciones', [ValoracionController::class, 'store'])->name('valoraciones.store');
+    Route::put('/valoraciones/{valoracion}', [ValoracionController::class, 'update'])->name('valoraciones.update');
+    Route::delete('/valoraciones/{valoracion}', [ValoracionController::class, 'destroy'])->name('valoraciones.destroy');
+    Route::put('/valoraciones/{valoracion}/reset', [ValoracionController::class, 'reset'])->name('valoraciones.reset');
+    Route::get('/administrar', [AdminController::class, 'index'])->name('administrar');
+    Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.delete');
+    Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'show'])->name('restaurantes.show');
+});

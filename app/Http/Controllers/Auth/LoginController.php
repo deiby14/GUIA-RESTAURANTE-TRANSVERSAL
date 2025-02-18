@@ -33,12 +33,28 @@ class LoginController extends Controller
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required|string|min:6',
+        ], [
+            'name.required' => 'El nombre de usuario es obligatorio.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
-        // Intentar autenticar al usuario
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->filled('remember'))) {
-            // Autenticación correcta, redirigir al usuario a la página de restaurantes o donde sea necesario
-            return redirect()->intended(route('restaurants.index'));
+        if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
+            $request->session()->regenerate();
+            
+            // Obtener el rol del usuario
+            $role = Role::find(Auth::user()->rol_id);
+            
+            if ($role && $role->name === 'admin') {
+                return redirect()->route('inicio.admin');
+            }
+
+            return redirect()->intended('home');
+        }
+
+        if (Auth::attempt(['name' => $request->name, 'password' => $request->password], $request->filled('remember'))) {
+            // Autenticación correcta, redirigir al usuario a la vista home.blade.php
+            return redirect()->intended(route('home'));
         }
 
         // Autenticación fallida, volver al formulario de inicio de sesión con un mensaje de error
