@@ -30,4 +30,9 @@ class Restaurante extends Model
     {
         return $this->belongsTo(Tipocomida::class);
     }
+    public function ciudad()
+    {
+        return $this->belongsTo(Ciudad::class);
+    }
+
 }

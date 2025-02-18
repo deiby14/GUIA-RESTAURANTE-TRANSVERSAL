@@ -133,9 +133,9 @@
                 
                 <div class="restaurant-info">
                     <h3 class="mb-4">Información del Restaurante</h3>
-                    <p><i class="fas fa-map-marker-alt text-danger"></i> <strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
-                    <p><i class="fas fa-utensils text-danger"></i> <strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_cocina }}</p>
-                    <p><i class="fas fa-euro-sign text-danger"></i> <strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}€</p>
+                    <p><i class="fas fa-map-marker-alt text-danger"></i> <strong>Dirección:</strong> {{ $restaurante->dirección }} | {{$restaurante->ciudad->nombre}}</p>
+                    <p><i class="fas fa-utensils text-danger"></i> <strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
+                    <p><i class="fas fa-euro-sign text-danger"></i> <strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
                     <p><i class="fas fa-info-circle text-danger"></i> <strong>Descripción:</strong> {{ $restaurante->descripcion }}</p>
                 </div>
 

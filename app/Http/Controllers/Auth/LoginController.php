@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait
+use Illuminate\Foundation\Validation\ValidatesRequests; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
 
 class LoginController extends Controller
 {
-    use ValidatesRequests; // Usa el trait
+    use ValidatesRequests; // Usa el trait para validación
 
     /**
      * Muestra el formulario de inicio de sesión.
@@ -29,9 +30,9 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validar los datos del formulario de login
+        // Validar los datos del formulario
         $this->validate($request, [
-            'email' => 'required|email',
+            'name' => 'required|string',
             'password' => 'required|string|min:6',
         ], [
             'name.required' => 'El nombre de usuario es obligatorio.',
@@ -57,10 +58,9 @@ class LoginController extends Controller
             return redirect()->intended(route('home'));
         }
 
-        // Autenticación fallida, volver al formulario de inicio de sesión con un mensaje de error
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no son correctas.',
-        ])->withInput($request->only('email', 'remember'));
+            'name' => 'El usuario o contraseña no coinciden en nuestros registros.',
+        ])->withInput($request->only('name'));
     }
 
     /**
@@ -79,6 +79,6 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         // Redirigir al usuario a la página de inicio
-        return redirect()->route('home');
+        return redirect('/');
     }
 }

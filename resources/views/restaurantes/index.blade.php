@@ -155,38 +155,11 @@
             </div>
         </div>
     </nav>
-
     <div class="container mt-5">
         <h1 class="mb-4">Lista de Restaurantes</h1>
         <div class="row">
             @foreach ($restaurantes as $restaurante)
-
                 <div class="col-md-4 mb-4">
-<<<<<<< HEAD
-                    <div class="card h-100">
-                        <!-- Mostrar la primera imagen si existe -->
-                        @if ($restaurante->fotos && $restaurante->fotos->isNotEmpty())
-                        <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                        @else
-                            <!-- Mostrar una imagen por defecto si no hay fotos -->
-                            <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                        @endif
-        
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $restaurante->nombre }}</h5>
-                            <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
-                            <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
-                            <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_comida ?? 'Sin tipo de cocina' }}</p>
-                            
-                            <!-- Sistema de valoración con estrellas -->
-                            <div class="rating-container">
-                                <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
-                                    <i class="fas fa-star star-rating" data-rating="1"></i>
-                                    <i class="fas fa-star star-rating" data-rating="2"></i>
-                                    <i class="fas fa-star star-rating" data-rating="3"></i>
-                                    <i class="fas fa-star star-rating" data-rating="4"></i>
-                                    <i class="fas fa-star star-rating" data-rating="5"></i>
-=======
                     <a href="{{ route('restaurantes.show', $restaurante->id) }}" class="text-decoration-none text-dark">
                         <div class="card h-100">
                             <!-- Mostrar la primera imagen si existe -->
@@ -198,7 +171,7 @@
 
                             <div class="card-body">
                                 <h5 class="card-title">{{ $restaurante->nombre }}</h5>
-                                <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
+                                <p><strong>Ciudad:</strong> {{$restaurante->ciudad->nombre}}</p>
                                 <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
                                 <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
                                 
@@ -214,7 +187,6 @@
                                     <span class="rating-text">
                                         Puntuación: {{ isset($userRatings[$restaurante->id]) ? $userRatings[$restaurante->id] : ($restaurante->valoraciones->avg('puntuación') ?? 0) }}/5
                                     </span>
->>>>>>> test
                                 </div>
                             </div>
                         </div>
