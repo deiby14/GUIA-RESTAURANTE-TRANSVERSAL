@@ -173,7 +173,7 @@
                                 <h5 class="card-title">{{ $restaurante->nombre }}</h5>
                                 <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
                                 <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
-                                <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_cocina }}</p>
+                                <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
                                 
                                 <!-- Sistema de valoración con estrellas -->
                                 <div class="rating-container">

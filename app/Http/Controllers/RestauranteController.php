@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 use App\Models\Restaurante;
+use App\Models\Tipocomida;
 use Illuminate\Http\Request;
 use App\Models\Valoracion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RestauranteController extends Controller
 {
@@ -15,19 +17,111 @@ class RestauranteController extends Controller
      */
     public function index()
     {
-        // Cargar los restaurantes con sus fotos y todas las valoraciones
-        $restaurantes = Restaurante::with(['fotos', 'valoraciones'])->get();
+        $restaurantes = Restaurante::with(['tipocomida', 'fotos', 'valoraciones'])->get();
+        $userRatings = []; // Aquí deberías cargar las valoraciones del usuario si las necesitas
         
-        // Si el usuario está autenticado, cargar sus valoraciones
-        if (auth()->check()) {
-            $userRatings = Valoracion::where('user_id', auth()->id())
-                ->pluck('puntuación', 'restaurante_id')
-                ->toArray();
-        } else {
-            $userRatings = [];
+        return view('restaurantes.index', compact('restaurantes', 'userRatings'));
+    }
+
+    public function create()
+    {
+        return view('restaurantes.create'); // Si tienes una vista para crear
+    }
+
+    public function store(Request $request)
+    {
+        // Validar los datos
+        $request->validate([
+            'nombre' => 'required',
+            'direccion' => 'required',
+            'precio_medio' => 'required|numeric',
+            'tipo_cocina' => 'required',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        try {
+            // Buscar o crear el tipo de comida
+            $tipocomida = Tipocomida::firstOrCreate(['nombre' => $request->tipo_cocina]);
+
+            // Crear el restaurante
+            $restaurante = new Restaurante();
+            $restaurante->nombre = $request->nombre;
+            $restaurante->direccion = $request->direccion;
+            $restaurante->precio_medio = $request->precio_medio;
+            $restaurante->tipocomida_id = $tipocomida->id;
+            $restaurante->save();
+
+            // Manejar la imagen
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+                $rutaImagen = $imagen->storeAs('public/restaurantes', $nombreImagen);
+                
+                // Crear el registro de la foto
+                $restaurante->fotos()->create([
+                    'ruta_imagen' => 'storage/restaurantes/' . $nombreImagen
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Restaurante creado exitosamente');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al crear el restaurante: ' . $e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        $restaurante = Restaurante::findOrFail($id);
+        return view('restaurantes.edit', compact('restaurante')); // Si tienes una vista para editar
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'telefono' => 'required|string|max:15',
+            'precio_medio' => 'required|numeric',
+            'tipo_cocina' => 'required|string|max:255',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $restaurante = Restaurante::findOrFail($id);
+        $restaurante->nombre = $request->nombre;
+        $restaurante->direccion = $request->direccion;
+        $restaurante->telefono = $request->telefono;
+        $restaurante->precio_medio = $request->precio_medio;
+        $restaurante->tipo_cocina = $request->tipo_cocina;
+
+        // Manejo de la imagen
+        if ($request->hasFile('imagen')) {
+            // Eliminar la imagen anterior si existe
+            if ($restaurante->fotos && $restaurante->fotos->isNotEmpty()) {
+                Storage::disk('public')->delete($restaurante->fotos->first()->ruta_imagen);
+                $restaurante->fotos()->delete(); // Eliminar las fotos anteriores
+            }
+            $path = $request->file('imagen')->store('restaurantes', 'public');
+            $restaurante->fotos()->create(['ruta_imagen' => $path]);
         }
 
-        return view('restaurantes.index', compact('restaurantes', 'userRatings'));
+        $restaurante->save();
+
+        return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado correctamente');
+    }
+
+    public function destroy($id)
+    {
+        $restaurante = Restaurante::findOrFail($id);
+
+        // Eliminar las fotos asociadas
+        if ($restaurante->fotos && $restaurante->fotos->isNotEmpty()) {
+            Storage::disk('public')->delete($restaurante->fotos->first()->ruta_imagen);
+            $restaurante->fotos()->delete();
+        }
+
+        $restaurante->delete();
+
+        return redirect()->route('restaurantes.index')->with('success', 'Restaurante eliminado correctamente');
     }
 
     public function rate(Request $request)

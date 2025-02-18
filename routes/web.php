@@ -52,14 +52,14 @@ Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.d
 // Rutas de restaurantes
 Route::get('/administrar-restaurantes', [RestaurantesController::class, 'index'])->name('administrar.restaurantes');
 Route::get('/restaurantes/create', [RestaurantesController::class, 'createRestaurante'])->name('restaurantes.create');
-Route::post('/restaurantes', [RestaurantesController::class, 'storeRestaurante'])->name('restaurantes.store');
+Route::post('/restaurantes', [RestauranteController::class, 'store'])->name('restaurantes.store');
 Route::get('/restaurantes/{id}/edit', [RestaurantesController::class, 'editRestaurante'])->name('restaurantes.edit');
 Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaurante'])->name('restaurantes.update');
 Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
 
 Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');
 
-
+Route::resource('restaurantes', RestauranteController::class);
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/restaurantes/{restaurante}/valoraciones', [ValoracionController::class, 'store'])->name('valoraciones.store');

@@ -69,7 +69,6 @@
                         <li class="nav-item mt-2 mb-2">
                             <a href="{{ route('administrar') }}" class="btn btn-hover-grey" style="margin-right: 10px;">Usuarios</a>
                         </li>
-                       
                     @endif
 
                     @if(auth()->check())
@@ -98,7 +97,9 @@
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Administrar Restaurantes</h2>
-            <a href="{{ route('restaurantes.create') }}" class="btn btn-success">Añadir Restaurante</a>
+            <button type="button" class="btn btn-outline-custom" data-bs-toggle="modal" data-bs-target="#createRestauranteModal">
+                Añadir Restaurante
+            </button>
         </div>
         
         @if(session('success'))
@@ -112,8 +113,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
+                    <th>Precio Medio</th>
+                    <th>Tipo de Cocina</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -122,29 +123,146 @@
                     <tr>
                         <td>{{ $restaurante->id }}</td>
                         <td>{{ $restaurante->nombre }}</td>
-                        <td>{{ $restaurante->direccion }}</td>
-                        <td>{{ $restaurante->telefono }}</td>
+                        <td>{{ $restaurante->precio_medio }}</td>
+                        <td>{{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</td>
                         <td>
-                            <a href="{{ route('restaurantes.edit', $restaurante->id) }}" class="btn btn-sm btn-primary">Editar</a>
-                            <form action="{{ route('restaurantes.delete', $restaurante->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
-                            </form>
+                            <button class="btn btn-sm btn-outline-custom" data-bs-toggle="modal" data-bs-target="#editRestauranteModal{{ $restaurante->id }}">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteRestauranteModal{{ $restaurante->id }}">
+                                Eliminar
+                            </button>
                         </td>
                     </tr>
+
+                    <!-- Modal de Edición -->
+                    <div class="modal fade" id="editRestauranteModal{{ $restaurante->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editar Restaurante</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="mb-3">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" name="nombre" value="{{ $restaurante->nombre }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Dirección</label>
+                                            <input type="text" class="form-control" name="direccion" value="{{ $restaurante->direccion }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Precio Medio</label>
+                                            <input type="number" class="form-control" name="precio_medio" value="{{ $restaurante->precio_medio }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de Cocina</label>
+                                            <select class="form-control" name="tipo_cocina" required>
+                                                <option value="Italiana" {{ $restaurante->tipocomida->nombre == 'Italiana' ? 'selected' : '' }}>Italiana</option>
+                                                <option value="Mexicana" {{ $restaurante->tipocomida->nombre == 'Mexicana' ? 'selected' : '' }}>Mexicana</option>
+                                                <option value="Japonesa" {{ $restaurante->tipocomida->nombre == 'Japonesa' ? 'selected' : '' }}>Japonesa</option>
+                                                <option value="China" {{ $restaurante->tipocomida->nombre == 'China' ? 'selected' : '' }}>China</option>
+                                                <option value="Mediterránea" {{ $restaurante->tipocomida->nombre == 'Mediterránea' ? 'selected' : '' }}>Mediterránea</option>
+                                                <option value="Vegetariana" {{ $restaurante->tipocomida->nombre == 'Vegetariana' ? 'selected' : '' }}>Vegetariana</option>
+                                                <!-- Agrega más tipos de cocina según sea necesario -->
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Imagen Actual</label>
+                                            @if($restaurante->fotos && $restaurante->fotos->isNotEmpty())
+                                                <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" 
+                                                     class="img-thumbnail d-block mb-2" 
+                                                     style="max-width: 200px">
+                                            @endif
+                                            <input type="file" class="form-control" name="imagen">
+                                            <small class="text-muted">Deja en blanco para mantener la imagen actual</small>
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-custom">Actualizar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal de Eliminación -->
+                    <div class="modal fade" id="deleteRestauranteModal{{ $restaurante->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Estás seguro que quieres eliminar el restaurante <strong>{{ $restaurante->nombre }}</strong>?</p>
+                                    <p class="text-danger">Esta acción no se puede deshacer.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ route('restaurantes.delete', $restaurante->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
             </tbody>
         </table>
 
-        <!-- Botón de cerrar sesión -->
-        <form action="{{ route('logout') }}" method="POST" class="mt-3">
-            @csrf
-            <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
-        </form>
+        <!-- Modal de Creación -->
+        <div class="modal fade" id="createRestauranteModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Añadir Restaurante</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('restaurantes.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Dirección</label>
+                                <input type="text" class="form-control" name="direccion" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Precio Medio</label>
+                                <input type="number" class="form-control" name="precio_medio" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tipo de Cocina</label>
+                                <select class="form-control" name="tipo_cocina" required>
+                                    <option value="Italiana">Italiana</option>
+                                    <option value="Mexicana">Mexicana</option>
+                                    <option value="Japonesa">Japonesa</option>
+                                    <option value="China">China</option>
+                                    <option value="Mediterránea">Mediterránea</option>
+                                    <option value="Vegetariana">Vegetariana</option>
+                                    <!-- Agrega más tipos de cocina según sea necesario -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagen</label>
+                                <input type="file" class="form-control" name="imagen" required>
+                            </div>
+                            <button type="submit" class="btn btn-outline-custom">Crear</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    
-  
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 
