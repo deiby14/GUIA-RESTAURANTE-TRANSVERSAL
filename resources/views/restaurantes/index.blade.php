@@ -9,119 +9,109 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-        <style>
+    <style>
         .card img {
             height: 200px;
             object-fit: cover;
         }   
-            .navbar-custom {
-                background-color: #fff; /* Fondo blanco */
-                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra negra suave */
-            }
-            .navbar-brand img {
-                max-height: 40px; /* Tamaño del logotipo */
-            }
-            .user-icon {
-                cursor: pointer; /* Cambiar el cursor al pasar sobre el icono */
-            }
-    
-            /* Estilos para las barras de búsqueda */
-            .search-form {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 10px; /* Espaciado entre elementos */
-            }
-            .search-form input {
-                border: 2px solid #b22222; /* Borde rojo más fuerte */
-                border-radius: 25px; /* Bordes redondeados */
-                padding: 10px 20px; /* Espaciado interior */
-                flex: 1; /* Expandir los inputs */
-                max-width: calc(45%); /* Limitar el ancho para dejar espacio al botón */
-            }
-            .search-form button {
-                background-color: #b22222; /* Color rojo más fuerte */
-                color: white;
-                border: none;
-                border-radius: 25px; /* Bordes redondeados */
-                padding: 10px 20px; /* Espaciado interior */
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-            }
-            .search-form button:hover {
-                background-color: #8b0000; /* Efecto hover más oscuro */
-            }
-            h3{
-                color: white;
-                font-weight: bold;
-                text-align: center;
-                padding: 10px;
-            }
-            .container-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
-                height: 100vh; /* Ocupa toda la altura de la ventana */
-            }
-            .izquierda, .derecha {
-                padding: 20px; /* Espaciado interno */
-            }
-            .btn-hover-grey:hover {
-                background-color: #e0e0e0; /* Un gris un poco más oscuro */
-                color: #000; /* Cambiar el color del texto */
-                border: 1px solid #ccc; /* Agregar un borde */
-            }
-            .navbar-nav {
-                margin-top: 3px; /* Margen superior */
-                margin-bottom: 4px; /* Margen inferior */
-            }
-            .btn-outline-danger {
-                color: #dc3545;
-                border: 2px solid #dc3545;
-                transition: all 0.3s ease;
-            }
-            .btn-outline-danger:hover {
-                color: white;
-                background-color: #dc3545;
-            }
-            .rating-container {
-                margin-top: 15px;
-            }
+        .navbar-custom {
+            background-color: #fff; /* Fondo blanco */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra negra suave */
+        }
+        .navbar-brand img {
+            max-height: 40px; /* Tamaño del logotipo */
+        }
+        .user-icon {
+            cursor: pointer; /* Cambiar el cursor al pasar sobre el icono */
+        }
 
-            .stars {
-                display: inline-flex;
-                gap: 5px;
-                cursor: pointer;
-            }
+        /* Estilos para la barra de búsqueda */
+        .search-form {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .search-form input {
+            border: 2px solid #b22222; /* Borde rojo más fuerte */
+            border-radius: 25px; /* Bordes redondeados */
+            padding: 10px 20px; /* Espaciado interior */
+            width: 50%; /* Ocupa el 50% del ancho de la pantalla */
+        }
+        .search-form button {
+            background-color: #b22222; /* Color rojo más fuerte */
+            color: white;
+            border: none;
+            border-radius: 25px; /* Bordes redondeados */
+            padding: 10px 20px; /* Espaciado interior */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-form button:hover {
+            background-color: #8b0000; /* Efecto hover más oscuro */
+        }
+        .container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
+            height: 100vh; /* Ocupa toda la altura de la ventana */
+        }
+        .izquierda, .derecha {
+            padding: 20px; /* Espaciado interno */
+        }
+        .btn-hover-grey:hover {
+            background-color: #e0e0e0; /* Un gris un poco más oscuro */
+            color: #000; /* Cambiar el color del texto */
+            border: 1px solid #ccc; /* Agregar un borde */
+        }
+        .navbar-nav {
+            margin-top: 3px; /* Margen superior */
+            margin-bottom: 4px; /* Margen inferior */
+        }
+        .btn-outline-danger {
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-danger:hover {
+            color: white;
+            background-color: #dc3545;
+        }
+        .rating-container {
+            margin-top: 15px;
+        }
 
-            .star-rating {
-                font-size: 20px;
-                color: #ddd;
-                transition: color 0.2s;
-            }
+        .stars {
+            display: inline-flex;
+            gap: 5px;
+            cursor: pointer;
+        }
 
-            .star-rating.active {
-                color: #ffc107;
-            }
+        .star-rating {
+            font-size: 20px;
+            color: #ddd;
+            transition: color 0.2s;
+        }
 
-            .rating-text {
-                display: block;
-                margin-top: 5px;
-                font-size: 14px;
-            }
-        </style>
+        .star-rating.active {
+            color: #ffc107;
+        }
+
+        .rating-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
         <div class="container-fluid">
-            <!-- Logotipo -->
             <a class="navbar-brand">
                 <img src="{{ asset('img/logo.png') }}" alt="Logo" class="d-inline-block align-text-top">
             </a>
-            <!-- Botón de collapse para pantallas pequeñas -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <!-- Contenido de la navbar -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     @if(auth()->check())
@@ -132,7 +122,6 @@
                             <a href="{{ route('favorites.index') }}" class="btn btn-hover-grey">Favoritos</a>
                         </li>
                     @endif
-    
                     @if(auth()->check())
                         <li class="nav-item d-flex align-items-center">
                             <a class="nav-link user-icon me-3" href="#" style="display: flex; align-items: center;">
@@ -155,6 +144,17 @@
             </div>
         </div>
     </nav>
+<br><br>
+    <!-- Barra de búsqueda -->
+    <form action="{{ route('restaurantes.index') }}" method="GET" class="search-form">
+        <input type="text" name="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
+        <input type="text" name="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
+        <button type="submit">Buscar</button>
+    </form>
+    
+    </div>
+
+    <!-- Título de la página -->
     <div class="container mt-5">
         <h1 class="mb-4">Lista de Restaurantes</h1>
         <div class="row">
@@ -162,20 +162,16 @@
                 <div class="col-md-4 mb-4">
                     <a href="{{ route('restaurantes.show', $restaurante->id) }}" class="text-decoration-none text-dark">
                         <div class="card h-100">
-                            <!-- Mostrar la primera imagen si existe -->
                             @if ($restaurante->fotos && $restaurante->fotos->isNotEmpty())
                                 <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
                             @else
                                 <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
                             @endif
-
                             <div class="card-body">
                                 <h5 class="card-title">{{ $restaurante->nombre }}</h5>
                                 <p><strong>Ciudad:</strong> {{$restaurante->ciudad->nombre}}</p>
                                 <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
                                 <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
-                                
-                                <!-- Sistema de valoración con estrellas -->
                                 <div class="rating-container">
                                     <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
                                         <i class="fas fa-star star-rating" data-rating="1"></i>

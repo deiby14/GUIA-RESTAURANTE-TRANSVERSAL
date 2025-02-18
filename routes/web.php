@@ -78,3 +78,5 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.delete');
     Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'show'])->name('restaurantes.show');
 });
+
+Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');

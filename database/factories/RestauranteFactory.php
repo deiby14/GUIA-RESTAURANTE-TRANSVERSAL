@@ -24,4 +24,3 @@ class RestauranteFactory extends Factory
         ];
     }
 }
-//bynun

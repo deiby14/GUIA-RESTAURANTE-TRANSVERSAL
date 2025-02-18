@@ -11,16 +11,32 @@ use Illuminate\Support\Facades\Storage;
 class RestauranteController extends Controller
 {
     /**
-     * Muestra una lista de restaurantes.
+     * Muestra una lista de restaurantes o los resultados de la búsqueda.
      *
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $restaurantes = Restaurante::with(['tipocomida', 'fotos', 'valoraciones'])->get();
-        $userRatings = []; // Aquí deberías cargar las valoraciones del usuario si las necesitas
-        
-        return view('restaurantes.index', compact('restaurantes', 'userRatings'));
+        // Si hay parámetros de búsqueda, los aplicamos
+        $query = Restaurante::with(['tipocomida', 'fotos', 'valoraciones']);
+
+        // Filtrar por nombre si se proporcionó
+        if ($request->filled('nombre')) {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        // Filtrar por ciudad si se proporcionó
+        if ($request->filled('ciudad')) {
+            $query->whereHas('ciudad', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->ciudad . '%');
+            });
+        }
+
+        // Obtener los restaurantes según los filtros
+        $restaurantes = $query->get();
+
+        // Enviar los resultados de la búsqueda a la vista
+        return view('restaurantes.index', compact('restaurantes'));
     }
 
     public function create()
