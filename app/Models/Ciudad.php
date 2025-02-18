@@ -10,6 +10,8 @@ class Ciudad extends Model
     use HasFactory;
     protected $table = 'ciudades';
 
+    protected $fillable = ['nombre'];
+
     // Relación con Restaurantes
     public function restaurantes()
     {

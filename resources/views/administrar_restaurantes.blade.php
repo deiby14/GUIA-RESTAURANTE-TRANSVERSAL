@@ -95,6 +95,22 @@
     </nav>
 
     <div class="container mt-5">
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Administrar Restaurantes</h2>
             <button type="button" class="btn btn-outline-custom" data-bs-toggle="modal" data-bs-target="#createRestauranteModal">
@@ -153,7 +169,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Dirección</label>
-                                            <input type="text" class="form-control" name="direccion" value="{{ $restaurante->direccion }}" required>
+                                            <input type="text" class="form-control" name="dirección" value="{{ $restaurante->dirección }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Precio Medio</label>
@@ -162,23 +178,26 @@
                                         <div class="mb-3">
                                             <label class="form-label">Tipo de Cocina</label>
                                             <select class="form-control" name="tipo_cocina" required>
-                                                <option value="Italiana" {{ $restaurante->tipocomida->nombre == 'Italiana' ? 'selected' : '' }}>Italiana</option>
-                                                <option value="Mexicana" {{ $restaurante->tipocomida->nombre == 'Mexicana' ? 'selected' : '' }}>Mexicana</option>
-                                                <option value="Japonesa" {{ $restaurante->tipocomida->nombre == 'Japonesa' ? 'selected' : '' }}>Japonesa</option>
-                                                <option value="China" {{ $restaurante->tipocomida->nombre == 'China' ? 'selected' : '' }}>China</option>
-                                                <option value="Mediterránea" {{ $restaurante->tipocomida->nombre == 'Mediterránea' ? 'selected' : '' }}>Mediterránea</option>
-                                                <option value="Vegetariana" {{ $restaurante->tipocomida->nombre == 'Vegetariana' ? 'selected' : '' }}>Vegetariana</option>
-                                                <!-- Agrega más tipos de cocina según sea necesario -->
+                                                <option value="">Seleccione un tipo de cocina</option>
+                                                @foreach(['Italiana', 'Mexicana', 'Japonesa', 'China', 'Mediterránea', 'Vegetariana'] as $tipo)
+                                                    <option value="{{ $tipo }}" {{ $restaurante->tipocomida->nombre == $tipo ? 'selected' : '' }}>
+                                                        {{ $tipo }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Imagen Actual</label>
                                             @if($restaurante->fotos && $restaurante->fotos->isNotEmpty())
-                                                <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" 
-                                                     class="img-thumbnail d-block mb-2" 
-                                                     style="max-width: 200px">
+                                                <div class="mb-2">
+                                                    <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" 
+                                                         class="img-thumbnail" 
+                                                         style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                                </div>
+                                            @else
+                                                <p class="text-muted">No hay imagen actual</p>
                                             @endif
-                                            <input type="file" class="form-control" name="imagen">
+                                            <input type="file" class="form-control mt-2" name="imagen" accept="image/*">
                                             <small class="text-muted">Deja en blanco para mantener la imagen actual</small>
                                         </div>
                                         <button type="submit" class="btn btn-outline-custom">Actualizar</button>
@@ -232,27 +251,40 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Dirección</label>
-                                <input type="text" class="form-control" name="direccion" required>
+                                <input type="text" class="form-control" name="dirección" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Precio Medio</label>
-                                <input type="number" class="form-control" name="precio_medio" required>
+                                <input type="number" step="0.01" class="form-control" name="precio_medio" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Tipo de Cocina</label>
                                 <select class="form-control" name="tipo_cocina" required>
+                                    <option value="">Seleccione un tipo de cocina</option>
                                     <option value="Italiana">Italiana</option>
                                     <option value="Mexicana">Mexicana</option>
                                     <option value="Japonesa">Japonesa</option>
                                     <option value="China">China</option>
                                     <option value="Mediterránea">Mediterránea</option>
                                     <option value="Vegetariana">Vegetariana</option>
-                                    <!-- Agrega más tipos de cocina según sea necesario -->
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Imagen</label>
-                                <input type="file" class="form-control" name="imagen" required>
+                                <input type="file" class="form-control" name="imagen" accept="image/*" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" name="descripcion" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ciudad</label>
+                                <select class="form-control" name="ciudad_id">
+                                    <option value="">Seleccione una ciudad</option>
+                                    @foreach(\App\Models\Ciudad::all() as $ciudad)
+                                        <option value="{{ $ciudad->id }}">{{ $ciudad->nombre }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-outline-custom">Crear</button>
                         </form>

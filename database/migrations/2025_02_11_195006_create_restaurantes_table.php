@@ -11,13 +11,11 @@ return new class extends Migration
         Schema::create('restaurantes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->text('descripcion');
             $table->string('dirección');
             $table->decimal('precio_medio', 8, 2);
-            // $table->string('tipo_cocina');
-            $table->unsignedBigInteger('ciudad_id');
-            $table->foreign('ciudad_id')->references('id')->on('ciudades')->onDelete('cascade');
-            $table->foreignId('tipocomida_id')->constrained()->onDelete('cascade');
+            $table->text('descripcion')->nullable();
+            $table->foreignId('tipocomida_id')->constrained();
+            $table->foreignId('ciudad_id')->nullable()->constrained('ciudades');
             $table->timestamps();
         });
     }

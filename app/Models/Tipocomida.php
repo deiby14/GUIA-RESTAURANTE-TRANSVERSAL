@@ -7,9 +7,12 @@ class Tipocomida extends Model
 {
     protected $table = 'tipocomidas';
     use HasFactory;
+
+    protected $fillable = ['nombre'];
+
     // Relación con Restaurantes
     public function restaurantes()
     {
-        return $this->hasMany(Restaurante::class, 'tipocomida_id');
+        return $this->hasMany(Restaurante::class);
     }
 }
