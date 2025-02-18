@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('fotos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('restaurante_id');
+            $table->foreignId('restaurante_id')->constrained()->onDelete('cascade');
             $table->string('ruta_imagen');
             $table->timestamps();
-    
-            $table->foreign('restaurante_id')->references('id')->on('restaurantes');
         });
     }
 

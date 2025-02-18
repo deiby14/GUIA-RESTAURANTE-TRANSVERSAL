@@ -9,7 +9,20 @@ class TipocomidasSeeder extends Seeder
 {
     public function run()
     {
-        // Crea 7 tipos de comida ficticios usando la fábrica
-        Tipocomida::factory(7)->create();
+        $tiposComida = [
+            'Italiana',
+            'Japonesa',
+            'Mexicana',
+            'China',
+            'Española',
+            'India',
+            'Mediterránea'
+        ];
+
+        foreach ($tiposComida as $tipo) {
+            Tipocomida::create([
+                'nombre' => $tipo
+            ]);
+        }
     }
 }

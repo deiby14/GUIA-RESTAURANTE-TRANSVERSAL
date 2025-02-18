@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
             RolesSeeder::class,       // Crea roles primero
             UsuariosSeeder::class,   // Crea usuarios después de roles
             CiudadesSeeder::class,   // Crea ciudades
-            TipocomidasSeeder::class, // Crea tipos de comida
-            RestaurantesSeeder::class, // Crea restaurantes
+            TipocomidasSeeder::class,    // Primero crear los tipos de comida
+            RestaurantesSeeder::class,    // Luego los restaurantes
             ValoracionesSeeder::class, // Crea valoraciones después de restaurantes
         ]);
 

@@ -13,15 +13,11 @@ return new class extends Migration
     {
         Schema::create('valoraciones', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('restaurante_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('restaurante_id')->constrained()->onDelete('cascade');
             $table->decimal('puntuación', 2, 1);
             $table->text('comentario')->nullable();
             $table->timestamps();
-    
-            // Claves foráneas
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('restaurante_id')->references('id')->on('restaurantes');
         });
     }
 
