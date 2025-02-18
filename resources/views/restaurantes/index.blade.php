@@ -155,10 +155,12 @@
             </div>
         </div>
     </nav>
+
     <div class="container mt-5">
         <h1 class="mb-4">Lista de Restaurantes</h1>
         <div class="row">
             @foreach ($restaurantes as $restaurante)
+
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <!-- Mostrar la primera imagen si existe -->
@@ -173,7 +175,7 @@
                             <h5 class="card-title">{{ $restaurante->nombre }}</h5>
                             <p><strong>Dirección:</strong> {{ $restaurante->direccion }}</p>
                             <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
-                            <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_cocina }}</p>
+                            <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipo_comida ?? 'Sin tipo de cocina' }}</p>
                             
                             <!-- Sistema de valoración con estrellas -->
                             <div class="rating-container">

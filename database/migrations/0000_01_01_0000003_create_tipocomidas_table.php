@@ -1,23 +1,23 @@
-    <?php
+<?php
 
-    use Illuminate\Database\Migrations\Migration;
-    use Illuminate\Database\Schema\Blueprint;
-    use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-    return new class extends Migration
+return new class extends Migration
+{
+    public function up(): void
     {
-        public function up(): void
-        {
-            Schema::create('tipocomidas', function (Blueprint $table) {
-                $table->id();
-                $table->string('nombre'); // Nombre del tipo de comida
-                $table->timestamps();
+        Schema::create('tipocomidas', function (Blueprint $table) {
+            $table->id();
+            $table->string('nombre'); // Nombre del tipo de comida
+            $table->timestamps();
 
-            });
-        }
+        });
+    }
 
-        public function down(): void
-        {
-            Schema::dropIfExists('tipocomidas');
-        }
-    };
+    public function down(): void
+    {
+        Schema::dropIfExists('tipocomidas');
+    }
+};

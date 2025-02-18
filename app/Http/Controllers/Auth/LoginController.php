@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests; 
+use Illuminate\Foundation\Validation\ValidatesRequests; // Importa el trait
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Role;
 
 class LoginController extends Controller
 {
-    use ValidatesRequests; // Usa el trait para validación
+    use ValidatesRequests; // Usa el trait
 
     /**
      * Muestra el formulario de inicio de sesión.
@@ -30,39 +29,22 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validar los datos del formulario
+        // Validar los datos del formulario de login
         $this->validate($request, [
-            'name' => 'required|string',
+            'email' => 'required|email',
             'password' => 'required|string|min:6',
-        ], [
-            'name.required' => 'El nombre de usuario es obligatorio.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
-        if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
-            $request->session()->regenerate();
-            
-            // Obtener el rol del usuario
-            $role = Role::find(Auth::user()->rol_id);
-            
-            // Redirigir según el nombre del rol
-            if ($role && $role->name === 'admin') {
-                return redirect()->route('inicio.admin');
-            }
-
-            return redirect()->intended('home');
-        }
-
         // Intentar autenticar al usuario
-        if (Auth::attempt(['name' => $request->name, 'password' => $request->password], $request->filled('remember'))) {
-            // Autenticación correcta, redirigir al usuario a la vista home.blade.php
-            return redirect()->intended(route('home'));
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->filled('remember'))) {
+            // Autenticación correcta, redirigir al usuario a la página de restaurantes o donde sea necesario
+            return redirect()->intended(route('restaurants.index'));
         }
 
+        // Autenticación fallida, volver al formulario de inicio de sesión con un mensaje de error
         return back()->withErrors([
-            'name' => 'El usuario o contraseña no coinciden en nuestros registros.',
-        ])->withInput($request->only('name'));
+            'email' => 'Las credenciales proporcionadas no son correctas.',
+        ])->withInput($request->only('email', 'remember'));
     }
 
     /**
@@ -81,6 +63,6 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         // Redirigir al usuario a la página de inicio
-        return redirect('/');
+        return redirect()->route('home');
     }
 }
