@@ -102,6 +102,23 @@
             </button>
         </div>
         
+        <!-- Mensajes de error y éxito -->
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -234,27 +251,27 @@
         </table>
 
         <!-- Modal de Creación -->
-        <div class="modal fade" id="createRestauranteModal" tabindex="-1">
+        <div class="modal fade" id="createRestauranteModal" tabindex="-1" aria-labelledby="createRestauranteModalLabel" aria-hidden="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Añadir Restaurante</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title" id="createRestauranteModalLabel">Añadir Restaurante</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('restaurantes.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" name="nombre" required>
+                                <label class="form-label" for="nombre">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Dirección</label>
-                                <input type="text" class="form-control" name="dirección" required>
+                                <label class="form-label" for="direccion">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" name="dirección" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Precio Medio</label>
-                                <select class="form-control" name="precio_medio" required>
+                                <label class="form-label" for="precio_medio">Precio Medio</label>
+                                <select class="form-control" id="precio_medio" name="precio_medio" required>
                                     <option value="$">$ (Económico)</option>
                                     <option value="$$">$$ (Moderado)</option>
                                     <option value="$$$">$$$ (Caro)</option>
@@ -262,12 +279,12 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Descripción</label>
-                                <textarea class="form-control" name="descripcion" rows="3"></textarea>
+                                <label class="form-label" for="descripcion">Descripción</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Ciudad</label>
-                                <select class="form-control" name="ciudad_id" required>
+                                <label class="form-label" for="ciudad_id">Ciudad</label>
+                                <select class="form-control" id="ciudad_id" name="ciudad_id" required>
                                     <option value="">Seleccione una ciudad</option>
                                     @foreach(\App\Models\Ciudad::all() as $ciudad)
                                         <option value="{{ $ciudad->id }}">{{ $ciudad->nombre }}</option>
@@ -275,8 +292,8 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Tipo de Cocina</label>
-                                <select class="form-control" name="tipocomida_id" required>
+                                <label class="form-label" for="tipocomida_id">Tipo de Cocina</label>
+                                <select class="form-control" id="tipocomida_id" name="tipocomida_id" required>
                                     <option value="">Seleccione un tipo de cocina</option>
                                     @foreach(\App\Models\Tipocomida::all() as $tipo)
                                         <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
@@ -284,10 +301,19 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Imagen</label>
-                                <input type="file" class="form-control" name="imagen" required>
+                                <label class="form-label" for="imagen">Imagen</label>
+                                <input type="file" 
+                                       class="form-control" 
+                                       id="imagen" 
+                                       name="imagen" 
+                                       accept="image/jpeg,image/png,image/jpg,image/gif"
+                                       required>
+                                <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 2MB</small>
                             </div>
-                            <button type="submit" class="btn btn-outline-custom">Crear</button>
+                            <div class="modal-footer px-0 pb-0">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-outline-custom">Crear</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -297,5 +323,26 @@
 
     <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.getElementById('imagen').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+        const maxSize = 2 * 1024 * 1024; // 2MB en bytes
+
+        if (file) {
+            if (!allowedTypes.includes(file.type)) {
+                alert('Por favor, selecciona una imagen en formato JPG, JPEG, PNG o GIF');
+                this.value = ''; // Limpia el input
+                return;
+            }
+
+            if (file.size > maxSize) {
+                alert('La imagen no debe pesar más de 2MB');
+                this.value = ''; // Limpia el input
+                return;
+            }
+        }
+    });
+    </script>
 </body>
 </html> 

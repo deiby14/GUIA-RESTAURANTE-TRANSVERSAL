@@ -67,6 +67,7 @@ class RestauranteController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validación sin requerir imagen
             $validatedData = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'dirección' => 'required|string|max:255',
@@ -74,24 +75,43 @@ class RestauranteController extends Controller
                 'descripcion' => 'nullable|string',
                 'ciudad_id' => 'required|exists:ciudades,id',
                 'tipocomida_id' => 'required|exists:tipocomidas,id',
-                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Ahora es nullable
             ]);
 
-            $restaurante = new Restaurante($validatedData);
-            $restaurante->save();
+            // Crear el restaurante
+            $restaurante = Restaurante::create([
+                'nombre' => $validatedData['nombre'],
+                'dirección' => $validatedData['dirección'],
+                'precio_medio' => $validatedData['precio_medio'],
+                'descripcion' => $validatedData['descripcion'],
+                'ciudad_id' => $validatedData['ciudad_id'],
+                'tipocomida_id' => $validatedData['tipocomida_id'],
+            ]);
 
+            // Manejar la imagen solo si se proporciona una
             if ($request->hasFile('imagen')) {
                 $imagen = $request->file('imagen');
                 $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
-                $imagen->storeAs('public/restaurantes', $nombreImagen);
+                
+                $directorio = public_path('uploads/restaurantes');
+                if (!file_exists($directorio)) {
+                    mkdir($directorio, 0755, true);
+                }
+                
+                $imagen->move($directorio, $nombreImagen);
                 
                 $restaurante->fotos()->create([
-                    'ruta_imagen' => 'storage/restaurantes/' . $nombreImagen
+                    'ruta_imagen' => 'uploads/restaurantes/' . $nombreImagen
                 ]);
             }
 
             return redirect()->back()->with('success', 'Restaurante creado exitosamente');
         } catch (\Exception $e) {
+            \Log::error('Error en store:', [
+                'mensaje' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return redirect()->back()
                 ->with('error', 'Error al crear el restaurante: ' . $e->getMessage())
                 ->withInput();
