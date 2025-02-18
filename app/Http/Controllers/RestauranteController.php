@@ -66,34 +66,25 @@ class RestauranteController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos
-        $request->validate([
-            'nombre' => 'required',
-            'direccion' => 'required',
-            'precio_medio' => 'required|numeric',
-            'tipo_cocina' => 'required',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
         try {
-            // Buscar o crear el tipo de comida
-            $tipocomida = Tipocomida::firstOrCreate(['nombre' => $request->tipo_cocina]);
+            $validatedData = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'dirección' => 'required|string|max:255',
+                'precio_medio' => 'required|string|in:$,$$,$$$,$$$$',
+                'descripcion' => 'nullable|string',
+                'ciudad_id' => 'required|exists:ciudades,id',
+                'tipocomida_id' => 'required|exists:tipocomidas,id',
+                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
 
-            // Crear el restaurante
-            $restaurante = new Restaurante();
-            $restaurante->nombre = $request->nombre;
-            $restaurante->direccion = $request->direccion;
-            $restaurante->precio_medio = $request->precio_medio;
-            $restaurante->tipocomida_id = $tipocomida->id;
+            $restaurante = new Restaurante($validatedData);
             $restaurante->save();
 
-            // Manejar la imagen
             if ($request->hasFile('imagen')) {
                 $imagen = $request->file('imagen');
                 $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
-                $rutaImagen = $imagen->storeAs('public/restaurantes', $nombreImagen);
+                $imagen->storeAs('public/restaurantes', $nombreImagen);
                 
-                // Crear el registro de la foto
                 $restaurante->fotos()->create([
                     'ruta_imagen' => 'storage/restaurantes/' . $nombreImagen
                 ]);
@@ -101,7 +92,9 @@ class RestauranteController extends Controller
 
             return redirect()->back()->with('success', 'Restaurante creado exitosamente');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error al crear el restaurante: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Error al crear el restaurante: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -119,36 +112,43 @@ class RestauranteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'direccion' => 'required|string|max:255',
-            'telefono' => 'required|string|max:15',
-            'precio_medio' => 'required|numeric',
-            'tipo_cocina' => 'required|string|max:255',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $restaurante = Restaurante::findOrFail($id);
+            
+            $validatedData = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'dirección' => 'required|string|max:255',
+                'precio_medio' => 'required|string|in:$,$$,$$$,$$$$',
+                'descripcion' => 'nullable|string',
+                'ciudad_id' => 'required|exists:ciudades,id',
+                'tipocomida_id' => 'required|exists:tipocomidas,id',
+                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
 
-        $restaurante = Restaurante::findOrFail($id);
-        $restaurante->nombre = $request->nombre;
-        $restaurante->direccion = $request->direccion;
-        $restaurante->telefono = $request->telefono;
-        $restaurante->precio_medio = $request->precio_medio;
-        $restaurante->tipo_cocina = $request->tipo_cocina;
+            $restaurante->update($validatedData);
 
-        // Manejo de la imagen
-        if ($request->hasFile('imagen')) {
-            // Eliminar la imagen anterior si existe
-            if ($restaurante->fotos && $restaurante->fotos->isNotEmpty()) {
-                Storage::disk('public')->delete($restaurante->fotos->first()->ruta_imagen);
-                $restaurante->fotos()->delete(); // Eliminar las fotos anteriores
+            if ($request->hasFile('imagen')) {
+                // Eliminar imagen anterior si existe
+                if ($restaurante->fotos->isNotEmpty()) {
+                    Storage::delete(str_replace('storage/', 'public/', $restaurante->fotos->first()->ruta_imagen));
+                    $restaurante->fotos()->delete();
+                }
+
+                $imagen = $request->file('imagen');
+                $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+                $imagen->storeAs('public/restaurantes', $nombreImagen);
+                
+                $restaurante->fotos()->create([
+                    'ruta_imagen' => 'storage/restaurantes/' . $nombreImagen
+                ]);
             }
-            $path = $request->file('imagen')->store('restaurantes', 'public');
-            $restaurante->fotos()->create(['ruta_imagen' => $path]);
+
+            return redirect()->back()->with('success', 'Restaurante actualizado exitosamente');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error al actualizar el restaurante: ' . $e->getMessage())
+                ->withInput();
         }
-
-        $restaurante->save();
-
-        return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado correctamente');
     }
 
     /**
@@ -156,17 +156,21 @@ class RestauranteController extends Controller
      */
     public function destroy($id)
     {
-        $restaurante = Restaurante::findOrFail($id);
-
-        // Eliminar las fotos asociadas
-        if ($restaurante->fotos && $restaurante->fotos->isNotEmpty()) {
-            Storage::disk('public')->delete($restaurante->fotos->first()->ruta_imagen);
-            $restaurante->fotos()->delete();
+        try {
+            $restaurante = Restaurante::findOrFail($id);
+            
+            // Eliminar las imágenes físicas
+            foreach ($restaurante->fotos as $foto) {
+                Storage::delete(str_replace('storage/', 'public/', $foto->ruta_imagen));
+            }
+            
+            // La eliminación en cascada se encargará de eliminar las fotos y valoraciones relacionadas
+            $restaurante->delete();
+            
+            return redirect()->back()->with('success', 'Restaurante eliminado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al eliminar el restaurante: ' . $e->getMessage());
         }
-
-        $restaurante->delete();
-
-        return redirect()->route('restaurantes.index')->with('success', 'Restaurante eliminado correctamente');
     }
 
     /**

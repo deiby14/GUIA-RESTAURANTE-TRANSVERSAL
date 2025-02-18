@@ -61,8 +61,8 @@ Route::get('/administrar-restaurantes', [RestaurantesController::class, 'index']
 Route::get('/restaurantes/create', [RestaurantesController::class, 'createRestaurante'])->name('restaurantes.create');
 Route::post('/restaurantes', [RestauranteController::class, 'store'])->name('restaurantes.store');
 Route::get('/restaurantes/{id}/edit', [RestaurantesController::class, 'editRestaurante'])->name('restaurantes.edit');
-Route::put('/restaurantes/{id}', [RestaurantesController::class, 'updateRestaurante'])->name('restaurantes.update');
-Route::delete('/restaurantes/{id}', [RestaurantesController::class, 'deleteRestaurante'])->name('restaurantes.delete');
+Route::put('/restaurantes/{id}', [RestauranteController::class, 'update'])->name('restaurantes.update');
+Route::delete('/restaurantes/{id}', [RestauranteController::class, 'destroy'])->name('restaurantes.delete');
 
 Route::post('/restaurantes/rate', [RestauranteController::class, 'rate'])->name('restaurantes.rate');
 

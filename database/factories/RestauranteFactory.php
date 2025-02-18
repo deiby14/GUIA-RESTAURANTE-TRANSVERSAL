@@ -14,13 +14,12 @@ class RestauranteFactory extends Factory
     public function definition()
     {
         return [
-            'nombre' => $this->faker->company, // Nombre del restaurante
-            'descripcion' => $this->faker->paragraph, // Descripción ficticia
-            'dirección' => $this->faker->address, // Dirección ficticia
-            'precio_medio' => '$' . str_repeat('$', $this->faker->numberBetween(1, 3)), // Genera precios como $$ o $$$
-            'ciudad_id' => \App\Models\Ciudad::factory(),
-            'tipocomida_id' => \App\Models\Tipocomida::factory(),
-
+            'nombre' => $this->faker->company,
+            'descripcion' => $this->faker->paragraph,
+            'dirección' => $this->faker->address,
+            'precio_medio' => '$' . str_repeat('$', $this->faker->numberBetween(0, 3)), // Genera entre $ y $$$$
+            'ciudad_id' => Ciudad::inRandomOrder()->first()->id,
+            'tipocomida_id' => Tipocomida::inRandomOrder()->first()->id, // Cambiado aquí
         ];
     }
 }

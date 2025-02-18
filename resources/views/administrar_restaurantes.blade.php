@@ -153,22 +153,41 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Dirección</label>
-                                            <input type="text" class="form-control" name="direccion" value="{{ $restaurante->direccion }}" required>
+                                            <input type="text" class="form-control" name="dirección" value="{{ $restaurante->dirección }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Precio Medio</label>
-                                            <input type="number" class="form-control" name="precio_medio" value="{{ $restaurante->precio_medio }}" required>
+                                            <select class="form-control" name="precio_medio" required>
+                                                <option value="$" {{ $restaurante->precio_medio === '$' ? 'selected' : '' }}>$ (Económico)</option>
+                                                <option value="$$" {{ $restaurante->precio_medio === '$$' ? 'selected' : '' }}>$$ (Moderado)</option>
+                                                <option value="$$$" {{ $restaurante->precio_medio === '$$$' ? 'selected' : '' }}>$$$ (Caro)</option>
+                                                <option value="$$$$" {{ $restaurante->precio_medio === '$$$$' ? 'selected' : '' }}>$$$$ (Muy caro)</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Descripción</label>
+                                            <textarea class="form-control" name="descripcion" rows="3">{{ $restaurante->descripcion }}</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Ciudad</label>
+                                            <select class="form-control" name="ciudad_id" required>
+                                                <option value="">Seleccione una ciudad</option>
+                                                @foreach(\App\Models\Ciudad::all() as $ciudad)
+                                                    <option value="{{ $ciudad->id }}" {{ $restaurante->ciudad_id == $ciudad->id ? 'selected' : '' }}>
+                                                        {{ $ciudad->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Tipo de Cocina</label>
-                                            <select class="form-control" name="tipo_cocina" required>
-                                                <option value="Italiana" {{ $restaurante->tipocomida->nombre == 'Italiana' ? 'selected' : '' }}>Italiana</option>
-                                                <option value="Mexicana" {{ $restaurante->tipocomida->nombre == 'Mexicana' ? 'selected' : '' }}>Mexicana</option>
-                                                <option value="Japonesa" {{ $restaurante->tipocomida->nombre == 'Japonesa' ? 'selected' : '' }}>Japonesa</option>
-                                                <option value="China" {{ $restaurante->tipocomida->nombre == 'China' ? 'selected' : '' }}>China</option>
-                                                <option value="Mediterránea" {{ $restaurante->tipocomida->nombre == 'Mediterránea' ? 'selected' : '' }}>Mediterránea</option>
-                                                <option value="Vegetariana" {{ $restaurante->tipocomida->nombre == 'Vegetariana' ? 'selected' : '' }}>Vegetariana</option>
-                                                <!-- Agrega más tipos de cocina según sea necesario -->
+                                            <select class="form-control" name="tipocomida_id" required>
+                                                <option value="">Seleccione un tipo de cocina</option>
+                                                @foreach(\App\Models\Tipocomida::all() as $tipo)
+                                                    <option value="{{ $tipo->id }}" {{ $restaurante->tipocomida_id == $tipo->id ? 'selected' : '' }}>
+                                                        {{ $tipo->nombre }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="mb-3">
@@ -187,7 +206,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Modal de Eliminación -->
                     <div class="modal fade" id="deleteRestauranteModal{{ $restaurante->id }}" tabindex="-1">
                         <div class="modal-dialog">
@@ -232,22 +250,37 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Dirección</label>
-                                <input type="text" class="form-control" name="direccion" required>
+                                <input type="text" class="form-control" name="dirección" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Precio Medio</label>
-                                <input type="number" class="form-control" name="precio_medio" required>
+                                <select class="form-control" name="precio_medio" required>
+                                    <option value="$">$ (Económico)</option>
+                                    <option value="$$">$$ (Moderado)</option>
+                                    <option value="$$$">$$$ (Caro)</option>
+                                    <option value="$$$$">$$$$ (Muy caro)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" name="descripcion" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ciudad</label>
+                                <select class="form-control" name="ciudad_id" required>
+                                    <option value="">Seleccione una ciudad</option>
+                                    @foreach(\App\Models\Ciudad::all() as $ciudad)
+                                        <option value="{{ $ciudad->id }}">{{ $ciudad->nombre }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Tipo de Cocina</label>
-                                <select class="form-control" name="tipo_cocina" required>
-                                    <option value="Italiana">Italiana</option>
-                                    <option value="Mexicana">Mexicana</option>
-                                    <option value="Japonesa">Japonesa</option>
-                                    <option value="China">China</option>
-                                    <option value="Mediterránea">Mediterránea</option>
-                                    <option value="Vegetariana">Vegetariana</option>
-                                    <!-- Agrega más tipos de cocina según sea necesario -->
+                                <select class="form-control" name="tipocomida_id" required>
+                                    <option value="">Seleccione un tipo de cocina</option>
+                                    @foreach(\App\Models\Tipocomida::all() as $tipo)
+                                        <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">

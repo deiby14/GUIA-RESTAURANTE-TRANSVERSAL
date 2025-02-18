@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->text('descripcion');
             $table->string('dirección');
-            $table->text('precio_medio');
+            $table->string('precio_medio');
             // $table->string('tipo_cocina');
             $table->unsignedBigInteger('ciudad_id');
             $table->foreign('ciudad_id')->references('id')->on('ciudades')->onDelete('cascade');

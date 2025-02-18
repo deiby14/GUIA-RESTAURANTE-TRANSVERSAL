@@ -2,14 +2,25 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Ciudad;
+use Illuminate\Database\Seeder;
 
 class CiudadesSeeder extends Seeder
 {
     public function run()
     {
-        // Crea 10 ciudades ficticias usando la fábrica
-        Ciudad::factory(10)->create();
+        $ciudades = [
+            'Madrid',
+            'Barcelona',
+            'Valencia',
+            'Sevilla',
+            'Bilbao'
+        ];
+
+        foreach ($ciudades as $nombreCiudad) {
+            Ciudad::create([
+                'nombre' => $nombreCiudad
+            ]);
+        }
     }
 }

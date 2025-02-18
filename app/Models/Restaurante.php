@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\Ciudad;
 
 class Restaurante extends Model
 {
@@ -11,8 +12,10 @@ class Restaurante extends Model
     
     protected $fillable = [
         'nombre',
-        'direccion',
+        'descripcion',
+        'dirección',
         'precio_medio',
+        'ciudad_id',
         'tipocomida_id'
     ];
     
