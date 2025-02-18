@@ -144,15 +144,49 @@
             </div>
         </div>
     </nav>
-<br><br>
-    <!-- Barra de búsqueda -->
-    <form action="{{ route('restaurantes.index') }}" method="GET" class="search-form">
-        <input type="text" name="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
-        <input type="text" name="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
-        <button type="submit">Buscar</button>
-    </form>
+    <br><br>
     
+    <!-- Barra de búsqueda -->
+    <!-- Formulario de búsqueda -->
+    <form id="search-form" class="search-form">
+        <input type="text" name="nombre" id="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
+        <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
+    </form>
+<hr>
+    <!-- Contenedor de resultados -->
+    <div id="restaurantes-container">
+        @include('restaurantes.partials.restaurantes_list', ['restaurantes' => $restaurantes])
     </div>
+
+    <!-- JavaScript para AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Evento para realizar la búsqueda mientras el usuario escribe
+            $('#nombre, #ciudad').on('input', function() {
+                // Recoger los datos de los campos de búsqueda
+                var nombre = $('#nombre').val();
+                var ciudad = $('#ciudad').val();
+
+                // Realizar la solicitud AJAX
+                $.ajax({
+                    url: "{{ route('restaurantes.index') }}", // Ruta para manejar la búsqueda
+                    method: "GET",
+                    data: {
+                        nombre: nombre,
+                        ciudad: ciudad
+                    },
+                    success: function(response) {
+                        // Actualizar el contenedor con los nuevos resultados
+                        $('#restaurantes-container').html(response);
+                    },
+                    error: function() {
+                        alert('Ocurrió un error al realizar la búsqueda.');
+                    }
+                });
+            });
+        });
+    </script>
 
     <!-- Título de la página -->
     <div class="container mt-5">

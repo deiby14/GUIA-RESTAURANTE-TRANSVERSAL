@@ -11,7 +11,6 @@ use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ValoracionController;
 
-
 // Ruta para la página de bienvenida
 Route::get('/', function () {
     return view('home'); // Cambia 'home' por el nombre de tu vista 

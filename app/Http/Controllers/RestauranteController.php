@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Restaurante;
 use App\Models\Tipocomida;
 use Illuminate\Http\Request;
 use App\Models\Valoracion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Ciudad;
+
 
 class RestauranteController extends Controller
 {
@@ -17,7 +20,7 @@ class RestauranteController extends Controller
      */
     public function index(Request $request)
     {
-        // Si hay parámetros de búsqueda, los aplicamos
+        // Iniciamos la consulta base para restaurantes
         $query = Restaurante::with(['tipocomida', 'fotos', 'valoraciones']);
 
         // Filtrar por nombre si se proporcionó
@@ -35,15 +38,32 @@ class RestauranteController extends Controller
         // Obtener los restaurantes según los filtros
         $restaurantes = $query->get();
 
-        // Enviar los resultados de la búsqueda a la vista
-        return view('restaurantes.index', compact('restaurantes'));
+        // Obtener los tipos de comida (esto es necesario para el filtro de tipo de comida en la vista)
+        $tipos_comida = Tipocomida::all();
+
+        // Obtener las ciudades para el filtro de ciudad (asegurarse de que tienes el modelo Ciudad)
+        $ciudades = Ciudad::all(); // Asegúrate de que Ciudad sea un modelo válido en tu proyecto
+
+        // Si la solicitud es AJAX, solo devolver el HTML de la lista de restaurantes
+        if ($request->ajax()) {
+            return view('restaurantes.partials.restaurantes_list', compact('restaurantes'));
+        }
+
+        // Enviar los resultados de la búsqueda a la vista junto con los tipos de comida y ciudades
+        return view('restaurantes.index', compact('restaurantes', 'tipos_comida', 'ciudades'));
     }
 
+    /**
+     * Mostrar formulario para crear un nuevo restaurante
+     */
     public function create()
     {
         return view('restaurantes.create'); // Si tienes una vista para crear
     }
 
+    /**
+     * Almacenar un nuevo restaurante
+     */
     public function store(Request $request)
     {
         // Validar los datos
@@ -85,12 +105,18 @@ class RestauranteController extends Controller
         }
     }
 
+    /**
+     * Mostrar el formulario para editar un restaurante
+     */
     public function edit($id)
     {
         $restaurante = Restaurante::findOrFail($id);
         return view('restaurantes.edit', compact('restaurante')); // Si tienes una vista para editar
     }
 
+    /**
+     * Actualizar un restaurante
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -125,6 +151,9 @@ class RestauranteController extends Controller
         return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado correctamente');
     }
 
+    /**
+     * Eliminar un restaurante
+     */
     public function destroy($id)
     {
         $restaurante = Restaurante::findOrFail($id);
@@ -140,6 +169,9 @@ class RestauranteController extends Controller
         return redirect()->route('restaurantes.index')->with('success', 'Restaurante eliminado correctamente');
     }
 
+    /**
+     * Guardar una valoración para un restaurante
+     */
     public function rate(Request $request)
     {
         try {
@@ -183,6 +215,9 @@ class RestauranteController extends Controller
         }
     }
 
+    /**
+     * Mostrar los detalles de un restaurante
+     */
     public function show(Restaurante $restaurante)
     {
         // Obtener las valoraciones del restaurante con sus usuarios
