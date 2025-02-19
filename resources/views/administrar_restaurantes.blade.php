@@ -48,6 +48,18 @@
             color: #fff;
             background-color: #dc3545;
         }
+
+        /* Estilos para validación */
+        .error {
+            color: red;
+            font-size: 14px;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .is-invalid {
+            border-color: red !important;
+        }
     </style>
 </head>
 <body>
@@ -207,11 +219,13 @@
                                         @method('PUT')
                                         <div class="mb-3">
                                             <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" name="nombre" value="{{ $restaurante->nombre }}" required>
+                                            <input type="text" class="form-control" id="nombre-{{ $restaurante->id }}" name="nombre" value="{{ $restaurante->nombre }}" required>
+                                            <span class="error" id="errorNombre-{{ $restaurante->id }}"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Dirección</label>
-                                            <input type="text" class="form-control" name="dirección" value="{{ $restaurante->dirección }}" required>
+                                            <input type="text" class="form-control" id="direccion-{{ $restaurante->id }}" name="dirección" value="{{ $restaurante->dirección }}" required>
+                                            <span class="error" id="errorDireccion-{{ $restaurante->id }}"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Precio Medio</label>
@@ -224,11 +238,12 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Descripción</label>
-                                            <textarea class="form-control" name="descripcion" rows="3">{{ $restaurante->descripcion }}</textarea>
+                                            <textarea class="form-control" id="descripcion-{{ $restaurante->id }}" name="descripcion" rows="3">{{ $restaurante->descripcion }}</textarea>
+                                            <span class="error" id="errorDescripcion-{{ $restaurante->id }}"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Ciudad</label>
-                                            <select class="form-control" name="ciudad_id" required>
+                                            <select class="form-control" id="ciudad_id-{{ $restaurante->id }}" name="ciudad_id" required>
                                                 <option value="">Seleccione una ciudad</option>
                                                 @foreach(\App\Models\Ciudad::all() as $ciudad)
                                                     <option value="{{ $ciudad->id }}" {{ $restaurante->ciudad_id == $ciudad->id ? 'selected' : '' }}>
@@ -239,7 +254,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Tipo de Cocina</label>
-                                            <select class="form-control" name="tipocomida_id" required>
+                                            <select class="form-control" id="tipocomida_id-{{ $restaurante->id }}" name="tipocomida_id" required>
                                                 <option value="">Seleccione un tipo de cocina</option>
                                                 @foreach(\App\Models\Tipocomida::all() as $tipo)
                                                     <option value="{{ $tipo->id }}" {{ $restaurante->tipocomida_id == $tipo->id ? 'selected' : '' }}>
@@ -305,10 +320,12 @@
                             <div class="mb-3">
                                 <label class="form-label" for="nombre">Nombre</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                <span class="error" id="errorNombre"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="direccion">Dirección</label>
                                 <input type="text" class="form-control" id="direccion" name="dirección" required>
+                                <span class="error" id="errorDireccion"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="precio_medio">Precio Medio</label>
@@ -322,6 +339,7 @@
                             <div class="mb-3">
                                 <label class="form-label" for="descripcion">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                                <span class="error" id="errorDescripcion"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="ciudad_id">Ciudad</label>
@@ -353,7 +371,7 @@
                             </div>
                             <div class="modal-footer px-0 pb-0">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-outline-custom">Crear</button>
+                                <button type="submit" class="btn btn-outline-custom" disabled>Crear</button>
                             </div>
                         </form>
                     </div>
@@ -446,5 +464,8 @@
         });
     });
     </script>
+
+    <!-- Antes del cierre del body -->
+    <script src="{{ asset('js/validations_rest_crud.js') }}"></script>
 </body>
 </html> 
