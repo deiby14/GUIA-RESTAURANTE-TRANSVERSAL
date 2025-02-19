@@ -104,69 +104,92 @@
 
         /* Estilos para los filtros */
         .filters-container {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-top: 20px;
+            padding: 10px 0;
+            margin: 10px 0;
         }
 
-        .form-select {
-            border: 2px solid #b22222;
-            border-radius: 25px;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: white;
-            transition: all 0.3s ease;
-        }
-
-        .form-select:hover {
-            border-color: #8b0000;
-        }
-
-        .form-select:focus {
-            border-color: #8b0000;
-            box-shadow: 0 0 0 0.2rem rgba(139,0,0,0.25);
-            outline: none;
-        }
-
-        /* Botón limpiar filtros */
-        .btn-clear-filters {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-        }
-
-        .btn-clear-filters:hover {
-            background-color: #5a6268;
-            transform: translateY(-1px);
-        }
-
-        /* Contenedor de filtros responsive */
         .filters-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
             align-items: center;
         }
 
         .filter-item {
-            flex: 1;
-            min-width: 200px;
+            flex: 0 1 auto;
         }
 
-        /* Etiquetas para los filtros */
-        .filter-label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
+        /* Estilo base para todos los elementos de filtro */
+        .btn-filter {
+            border: 2px solid #b22222;
+            border-radius: 20px;
+            padding: 5px 15px;
+            cursor: pointer;
+            background-color: white;
+            color: #b22222;
+            transition: all 0.3s ease;
             font-size: 0.9rem;
+            min-width: 120px;
+        }
+
+        /* Estilos específicos para los selects */
+        select.btn-filter {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b22222' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+            padding-right: 30px;
+        }
+
+        /* Estilos específicos para los botones */
+        button.btn-filter {
+            background-image: none;
+            padding: 5px 15px;
+        }
+
+        .wide-select {
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .btn-filter:hover {
+            background-color: #f8d7da;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-filter.active {
+            background-color: #b22222;
+            color: white;
+        }
+
+        .btn-filter.asc::after {
+            content: " ↑";
+        }
+
+        .btn-filter.desc::after {
+            content: " ↓";
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filter-item {
+                flex: 1 1 calc(50% - 10px);
+            }
+            
+            .btn-filter {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .filter-item {
+                flex: 1 1 100%;
+            }
         }
     </style>
 </head>
@@ -216,48 +239,40 @@
             <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
         </form>
 
-        <!-- Filtros actualizados -->
+        <!-- Filtros actualizados con estilo unificado -->
         <div class="filters-container">
             <div class="filters-row">
                 <div class="filter-item">
-                    <label class="filter-label">Ciudad</label>
-                    <select class="form-select" id="ciudad_id" name="ciudad_id">
-                        <option value="">Todas las ciudades</option>
+                    <select class="btn-filter" id="ciudad_id" name="ciudad_id">
+                        <option value="">🏙️ Ciudad</option>
                         @foreach($ciudades as $ciudad)
                             <option value="{{ $ciudad->id }}">{{ $ciudad->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label class="filter-label">Tipo de Comida</label>
-                    <select class="form-select" id="tipocomida_id" name="tipocomida_id">
-                        <option value="">Todos los tipos</option>
+                    <select class="btn-filter wide-select" id="tipocomida_id" name="tipocomida_id">
+                        <option value="">🍽️ Tipo de Comida</option>
                         @foreach($tipos_comida as $tipo)
                             <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label class="filter-label">Ordenar por Precio</label>
-                    <select class="form-select" id="orden_precio" name="orden_precio">
-                        <option value="">Precio</option>
-                        <option value="asc">Menor a mayor</option>
-                        <option value="desc">Mayor a menor</option>
-                    </select>
+                    <button type="button" class="btn-filter" id="precio-toggle" data-order="none">
+                        💰 Precio
+                    </button>
                 </div>
                 <div class="filter-item">
-                    <label class="filter-label">Ordenar por Puntuación</label>
-                    <select class="form-select" id="orden_puntuacion" name="orden_puntuacion">
-                        <option value="">Puntuación</option>
-                        <option value="desc">Mayor puntuación</option>
-                        <option value="asc">Menor puntuación</option>
-                    </select>
+                    <button type="button" class="btn-filter" id="puntuacion-toggle" data-order="none">
+                        ⭐ Puntuación
+                    </button>
                 </div>
-            </div>
-            <div class="text-center">
-                <button type="button" id="clear-filters" class="btn-clear-filters">
-                    <i class="fas fa-undo-alt"></i> Limpiar Filtros
-                </button>
+                <div class="filter-item">
+                    <button type="button" id="clear-filters" class="btn-filter">
+                        🔄 Limpiar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -282,8 +297,8 @@
                 var ciudad = $('#ciudad').val();
                 var ciudad_id = $('#ciudad_id').val();
                 var tipocomida_id = $('#tipocomida_id').val();
-                var orden_precio = $('#orden_precio').val();
-                var orden_puntuacion = $('#orden_puntuacion').val();
+                var orden_precio = $('#precio-toggle').data('order');
+                var orden_puntuacion = $('#puntuacion-toggle').data('order');
 
                 $.ajax({
                     url: "{{ route('restaurantes.index') }}",
@@ -293,11 +308,12 @@
                         ciudad: ciudad,
                         ciudad_id: ciudad_id,
                         tipocomida_id: tipocomida_id,
-                        orden_precio: orden_precio,
-                        orden_puntuacion: orden_puntuacion
+                        orden_precio: orden_precio === 'none' ? '' : orden_precio,
+                        orden_puntuacion: orden_puntuacion === 'none' ? '' : orden_puntuacion
                     },
                     success: function(response) {
                         $('#restaurantes-container').html(response);
+                        initializeRating();
                     },
                     error: function() {
                         alert('Ocurrió un error al realizar la búsqueda.');
@@ -307,15 +323,48 @@
 
             // Eventos para la barra de búsqueda
             $('#nombre, #ciudad').on('input', function() {
-                // Pequeño retraso para evitar demasiadas peticiones
                 clearTimeout($(this).data('timeout'));
                 $(this).data('timeout', setTimeout(function() {
                     actualizarResultados();
                 }, 300));
             });
 
-            // Eventos para los filtros
-            $('#ciudad_id, #tipocomida_id, #orden_precio, #orden_puntuacion').on('change', actualizarResultados);
+            // Eventos para los filtros de dropdown
+            $('#ciudad_id, #tipocomida_id').on('change', actualizarResultados);
+
+            // Toggle buttons functionality (ahora sumativos)
+            $('#precio-toggle, #puntuacion-toggle').click(function() {
+                const $button = $(this);
+                const currentOrder = $button.data('order') || 'none';
+                
+                // Rotate through none -> asc -> desc -> none
+                let newOrder;
+                if (currentOrder === 'none') {
+                    newOrder = 'asc';
+                    $button.addClass('asc active').removeClass('desc');
+                } else if (currentOrder === 'asc') {
+                    newOrder = 'desc';
+                    $button.addClass('desc').removeClass('asc');
+                } else {
+                    newOrder = 'none';
+                    $button.removeClass('asc desc active');
+                }
+                
+                $button.data('order', newOrder);
+                actualizarResultados();
+            });
+
+            // Clear filters
+            $('#clear-filters').click(function() {
+                $('#nombre').val('');
+                $('#ciudad').val('');
+                $('#ciudad_id').val('');
+                $('#tipocomida_id').val('');
+                $('#precio-toggle, #puntuacion-toggle')
+                    .data('order', 'none')
+                    .removeClass('asc desc active');
+                actualizarResultados();
+            });
 
             // Prevenir el envío del formulario
             $('#search-form').on('submit', function(e) {
@@ -323,21 +372,6 @@
                 actualizarResultados();
             });
 
-            // Función para limpiar filtros
-            $('#clear-filters').click(function() {
-                // Limpiar todos los campos
-                $('#nombre').val('');
-                $('#ciudad').val('');
-                $('#ciudad_id').val('');
-                $('#tipocomida_id').val('');
-                $('#orden_precio').val('');
-                $('#orden_puntuacion').val('');
-                
-                // Actualizar resultados
-                actualizarResultados();
-            });
-
-            // Sistema de rating en tiempo real
             function initializeRating() {
                 $('.stars').each(function() {
                     const $starsContainer = $(this);
@@ -427,7 +461,7 @@
                             });
 
                             // Si hay filtros de puntuación activos, actualizar los resultados
-                            if ($('#orden_puntuacion').val()) {
+                            if ($('#puntuacion-toggle').data('order') !== 'none') {
                                 actualizarResultados();
                             }
                         }
