@@ -266,12 +266,7 @@
             </div>
         </div>
 
-        <!-- Botón de cerrar sesión -->
-        <form action="{{ route('logout') }}" method="POST" class="mt-4">
-            @csrf
-            <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
-        </form>
-    </div>
+       
 
     <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
