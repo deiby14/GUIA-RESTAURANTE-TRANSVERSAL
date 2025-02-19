@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Valoracion;
 use App\Models\Restaurante;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ValoracionController extends Controller
 {
@@ -16,7 +17,7 @@ class ValoracionController extends Controller
         ]);
 
         // Verificar si el usuario ya tiene una valoración para este restaurante
-        $valoracionExistente = Valoracion::where('user_id', auth()->id())
+        $valoracionExistente = Valoracion::where('user_id', Auth::id())
             ->where('restaurante_id', $restaurante_id)
             ->first();
 
@@ -25,7 +26,7 @@ class ValoracionController extends Controller
         }
 
         Valoracion::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'restaurante_id' => $restaurante_id,
             'puntuación' => $request->puntuacion,
             'comentario' => $request->comentario
@@ -40,7 +41,7 @@ class ValoracionController extends Controller
             'comentario' => 'required|min:3'
         ]);
 
-        if ($valoracion->user_id !== auth()->id()) {
+        if ($valoracion->user_id !== Auth::id()) {
             return back()->with('error', 'No tienes permiso para editar esta valoración');
         }
 
@@ -53,7 +54,7 @@ class ValoracionController extends Controller
 
     public function destroy(Valoracion $valoracion)
     {
-        if ($valoracion->user_id !== auth()->id()) {
+        if ($valoracion->user_id !== Auth::id()) {
             return back()->with('error', 'No autorizado');
         }
 
@@ -66,7 +67,7 @@ class ValoracionController extends Controller
 
     public function reset(Valoracion $valoracion)
     {
-        if ($valoracion->user_id !== auth()->id()) {
+        if ($valoracion->user_id !== Auth::id()) {
             return back()->with('error', 'No tienes permiso para realizar esta acción');
         }
 

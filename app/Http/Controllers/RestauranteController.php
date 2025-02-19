@@ -9,7 +9,8 @@ use App\Models\Valoracion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Ciudad;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class RestauranteController extends Controller
 {
@@ -128,7 +129,7 @@ class RestauranteController extends Controller
 
             return redirect()->back()->with('success', 'Restaurante creado exitosamente');
         } catch (\Exception $e) {
-            \Log::error('Error en store:', [
+            Log::error('Error en store:', [
                 'mensaje' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -230,7 +231,7 @@ class RestauranteController extends Controller
             // Crear o actualizar la valoración
             $valoracion = Valoracion::updateOrCreate(
                 [
-                    'user_id' => auth()->id(),
+                    'user_id' => Auth::id(),
                     'restaurante_id' => $request->restaurant_id
                 ],
                 [
@@ -269,8 +270,8 @@ class RestauranteController extends Controller
         $valoraciones = $restaurante->valoraciones()->with('user')->get();
         
         // Si el usuario está autenticado, obtener su valoración
-        $miValoracion = auth()->check() 
-            ? $restaurante->valoraciones()->where('user_id', auth()->id())->first() 
+        $miValoracion = Auth::check() 
+            ? $restaurante->valoraciones()->where('user_id', Auth::id())->first() 
             : null;
 
         return view('restaurantes.show', compact('restaurante', 'valoraciones', 'miValoracion'));
