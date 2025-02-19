@@ -275,4 +275,28 @@ class RestauranteController extends Controller
 
         return view('restaurantes.show', compact('restaurante', 'valoraciones', 'miValoracion'));
     }
+
+    public function filtrar(Request $request)
+    {
+        $query = Restaurante::with(['ciudad', 'tipocomida']);
+
+        if ($request->nombre) {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->ciudad) {
+            $query->where('ciudad_id', $request->ciudad);
+        }
+
+        if ($request->tipo) {
+            $query->where('tipocomida_id', $request->tipo);
+        }
+
+        if ($request->precio) {
+            $query->where('precio_medio', $request->precio);
+        }
+
+        $restaurantes = $query->get();
+        return response()->json($restaurantes);
+    }
 }

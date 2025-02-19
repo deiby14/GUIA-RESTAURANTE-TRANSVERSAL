@@ -79,3 +79,5 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
+
+Route::get('/filtrar-restaurantes', [RestauranteController::class, 'filtrar']);

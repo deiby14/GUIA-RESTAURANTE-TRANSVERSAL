@@ -125,6 +125,45 @@
             </div>
         @endif
 
+        <!-- Añade esto justo después del div de mensajes de éxito y antes de la tabla -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" id="searchNombre" class="form-control" placeholder="Buscar por nombre...">
+                    </div>
+                    <div class="col-md-2">
+                        <select id="filterCiudad" class="form-control">
+                            <option value="">Todas las ciudades</option>
+                            @foreach(\App\Models\Ciudad::all() as $ciudad)
+                                <option value="{{ $ciudad->id }}">{{ $ciudad->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="filterTipoComida" class="form-control">
+                            <option value="">Todos los tipos</option>
+                            @foreach(\App\Models\Tipocomida::all() as $tipo)
+                                <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="filterPrecio" class="form-control">
+                            <option value="">Todos los precios</option>
+                            <option value="$">$ (Económico)</option>
+                            <option value="$$">$$ (Moderado)</option>
+                            <option value="$$$">$$$ (Caro)</option>
+                            <option value="$$$$">$$$$ (Muy caro)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="limpiarFiltros" class="btn btn-secondary">Limpiar filtros</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
@@ -132,6 +171,7 @@
                     <th>Nombre</th>
                     <th>Precio Medio</th>
                     <th>Tipo de Cocina</th>
+                    <th>Ciudad</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -142,6 +182,7 @@
                         <td>{{ $restaurante->nombre }}</td>
                         <td>{{ $restaurante->precio_medio }}</td>
                         <td>{{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</td>
+                        <td>{{ $restaurante->ciudad ? $restaurante->ciudad->nombre : 'No especificada' }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-custom" data-bs-toggle="modal" data-bs-target="#editRestauranteModal{{ $restaurante->id }}">
                                 Editar
@@ -342,6 +383,67 @@
                 return;
             }
         }
+    });
+    </script>
+
+    <!-- Añade esto justo antes del cierre del body, después del script existente -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchNombre = document.getElementById('searchNombre');
+        const filterCiudad = document.getElementById('filterCiudad');
+        const filterTipoComida = document.getElementById('filterTipoComida');
+        const filterPrecio = document.getElementById('filterPrecio');
+        const limpiarFiltros = document.getElementById('limpiarFiltros');
+
+        function filtrarRestaurantes() {
+            const params = new URLSearchParams({
+                nombre: searchNombre.value,
+                ciudad: filterCiudad.value,
+                tipo: filterTipoComida.value,
+                precio: filterPrecio.value
+            });
+
+            fetch(`/filtrar-restaurantes?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('table tbody');
+                    tbody.innerHTML = '';
+                    
+                    data.forEach(rest => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${rest.id}</td>
+                                <td>${rest.nombre}</td>
+                                <td>${rest.precio_medio}</td>
+                                <td>${rest.tipocomida ? rest.tipocomida.nombre : 'No especificado'}</td>
+                                <td>${rest.ciudad ? rest.ciudad.nombre : 'No especificada'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-custom" data-bs-toggle="modal" data-bs-target="#editRestauranteModal${rest.id}">
+                                        Editar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteRestauranteModal${rest.id}">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // Event listeners
+        searchNombre.addEventListener('input', filtrarRestaurantes);
+        filterCiudad.addEventListener('change', filtrarRestaurantes);
+        filterTipoComida.addEventListener('change', filtrarRestaurantes);
+        filterPrecio.addEventListener('change', filtrarRestaurantes);
+
+        limpiarFiltros.addEventListener('click', () => {
+            searchNombre.value = '';
+            filterCiudad.value = '';
+            filterTipoComida.value = '';
+            filterPrecio.value = '';
+            filtrarRestaurantes();
+        });
     });
     </script>
 </body>
