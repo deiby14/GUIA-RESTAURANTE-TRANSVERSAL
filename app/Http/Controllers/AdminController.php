@@ -13,7 +13,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::with('role')->get();
         $roles = Role::all();
         return view('administrar', compact('users', 'roles'));
     }

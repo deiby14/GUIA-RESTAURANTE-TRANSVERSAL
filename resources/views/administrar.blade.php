@@ -135,7 +135,7 @@
                         <td>{{ $user->id }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->rol_id }}</td>
+                        <td>{{ $user->role?->name ?? 'Sin rol' }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-custom" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
                                 Editar

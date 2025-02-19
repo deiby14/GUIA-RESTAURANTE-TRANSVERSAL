@@ -74,9 +74,51 @@
             color: #6c757d;
             font-size: 0.9em;
         }
+        .navbar-custom {
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1000;
+        }
+        .navbar-custom .navbar-brand img {
+            height: 40px;
+        }
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+        <div class="container-fluid">
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    @if(auth()->check())
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link user-icon me-3" href="#" style="display: flex; align-items: center;">
+                                <img src="{{ asset('img/user.webp') }}" alt="Usuario" class="rounded-circle" style="max-height: 40px;">
+                                <span style="margin-left: 10px;">{{ auth()->user()->name }}</span>
+                            </a>
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-danger" style="border-radius: 25px; padding: 8px 20px;">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a href="{{ route('login') }}" class="btn btn-danger" style="border-radius: 25px; padding: 10px 20px;">Iniciar Sesión</a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <!-- Botón volver arriba a la derecha -->
     <div class="container-fluid" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
         <a href="{{ route('restaurantes.index') }}" class="btn btn-outline-danger">

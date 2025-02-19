@@ -49,7 +49,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class);  //un user pertenece a un rol
+        return $this->belongsTo(Role::class, 'rol_id');  // Especificamos la clave foránea
     }
 
     public function valoraciones()

@@ -96,9 +96,6 @@
                     <li class="nav-item mt-2 mb-2">
                         <a href="{{ route('restaurantes.index') }}" class="btn btn-hover-grey" style="margin-right: 10px;">Restaurantes</a>
                     </li>
-                    <li class="nav-item mt-2 mb-2">
-                        <a href="{{ route('favorites.index') }}" class="btn btn-hover-grey">Favoritos</a>
-                    </li>
                 @endif
 
                 <!-- Mostrar botón de Iniciar Sesión o icono de usuario -->
