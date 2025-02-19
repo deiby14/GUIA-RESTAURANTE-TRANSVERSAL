@@ -127,17 +127,10 @@
     <div class="container-grid">
         <!-- Contenido de la izquierda -->
         <div class="container izquierda text-center mt-5">
-            <h3>Descubre y reserva hoteles y restaurantes seleccionados por la Guía MICHELIN</h3>
+            <h3> Guía MICHELIN el mejor buscador de restaurantes en linea</h3>
             <br><br>
             <!-- Formulario de búsqueda -->
-            <form class="search-form d-flex container justify-content-center align-items-center">
-                <!-- Barra de búsqueda por ubicación -->
-                <input type="text" class="form-control me-2" name="city" placeholder="Buscar por ciudad..." style="max-width: calc(45%);">
-                <!-- Barra de búsqueda por nombre -->
-                <input type="text" class="form-control me-2" name="name" placeholder="Buscar por nombre..." style="max-width: calc(45%);">
-                <!-- Botón de búsqueda -->
-                <button type="submit" class="btn btn-danger">Buscar</button>
-            </form>
+            
             <br><br>
         </div>
 

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const ratingText = container.nextElementSibling;
 
         // Establecer puntuación inicial
-        let currentRating = parseInt(ratingText.textContent.match(/\d+/)[0]) || 0;
+        let currentRating = Math.round(parseInt(ratingText.textContent.match(/\d+/)[0]) || 0);
         updateStarDisplay(stars, currentRating);
 
         // Manejar click en las estrellas
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Restaurar visualización al salir
         container.addEventListener('mouseleave', () => {
             updateStarDisplay(stars, currentRating);
-            ratingText.textContent = `Puntuación: ${currentRating}/5`;
+            ratingText.textContent = `Puntuación: ${Math.round(currentRating)}/5`;
         });
     });
 });

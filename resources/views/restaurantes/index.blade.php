@@ -115,12 +115,8 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     @if(auth()->check())
-                        <li class="nav-item mt-2 mb-2">
-                            <a href="{{ route('restaurantes.index') }}" class="btn btn-hover-grey" style="margin-right: 10px;">Restaurantes</a>
-                        </li>
-                        <li class="nav-item mt-2 mb-2">
-                            <a href="{{ route('favorites.index') }}" class="btn btn-hover-grey">Favoritos</a>
-                        </li>
+                        
+                        
                     @endif
                     @if(auth()->check())
                         <li class="nav-item d-flex align-items-center">
@@ -147,37 +143,38 @@
     <br><br>
     
     <!-- Barra de búsqueda -->
-    <!-- Formulario de búsqueda -->
     <form id="search-form" class="search-form">
         <input type="text" name="nombre" id="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
         <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
     </form>
-<hr>
+    <hr>
+
     <!-- Contenedor de resultados -->
-    <div id="restaurantes-container">
-        @include('restaurantes.partials.restaurantes_list', ['restaurantes' => $restaurantes])
+    <div class="container mt-5">
+        <h1 class="mb-4">Lista de Restaurantes</h1>
+        <div id="restaurantes-container">
+            @include('restaurantes.partials.restaurantes_list', ['restaurantes' => $restaurantes])
+        </div>
     </div>
 
-    <!-- JavaScript para AJAX -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/rating.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // Evento para realizar la búsqueda mientras el usuario escribe
             $('#nombre, #ciudad').on('input', function() {
-                // Recoger los datos de los campos de búsqueda
                 var nombre = $('#nombre').val();
                 var ciudad = $('#ciudad').val();
 
-                // Realizar la solicitud AJAX
                 $.ajax({
-                    url: "{{ route('restaurantes.index') }}", // Ruta para manejar la búsqueda
+                    url: "{{ route('restaurantes.index') }}",
                     method: "GET",
                     data: {
                         nombre: nombre,
                         ciudad: ciudad
                     },
                     success: function(response) {
-                        // Actualizar el contenedor con los nuevos resultados
                         $('#restaurantes-container').html(response);
                     },
                     error: function() {
@@ -187,47 +184,5 @@
             });
         });
     </script>
-
-    <!-- Título de la página -->
-    <div class="container mt-5">
-        <h1 class="mb-4">Lista de Restaurantes</h1>
-        <div class="row">
-            @foreach ($restaurantes as $restaurante)
-                <div class="col-md-4 mb-4">
-                    <a href="{{ route('restaurantes.show', $restaurante->id) }}" class="text-decoration-none text-dark">
-                        <div class="card h-100">
-                            @if ($restaurante->fotos && $restaurante->fotos->isNotEmpty())
-                                <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                            @else
-                                <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                            @endif
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $restaurante->nombre }}</h5>
-                                <p><strong>Ciudad:</strong> {{$restaurante->ciudad->nombre}}</p>
-                                <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
-                                <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
-                                <div class="rating-container">
-                                    <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
-                                        <i class="fas fa-star star-rating" data-rating="1"></i>
-                                        <i class="fas fa-star star-rating" data-rating="2"></i>
-                                        <i class="fas fa-star star-rating" data-rating="3"></i>
-                                        <i class="fas fa-star star-rating" data-rating="4"></i>
-                                        <i class="fas fa-star star-rating" data-rating="5"></i>
-                                    </div>
-                                    <span class="rating-text">
-                                        Puntuación: {{ isset($userRatings[$restaurante->id]) ? $userRatings[$restaurante->id] : ($restaurante->valoraciones->avg('puntuación') ?? 0) }}/5
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- Agregar Bootstrap JS (opcional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/rating.js') }}"></script>
 </body>
 </html>

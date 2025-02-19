@@ -37,7 +37,11 @@
                                     <i class="fas fa-star star-rating" data-rating="5"></i>
                                 </div>
                                 <span class="rating-text d-block mt-2">
-                                    Puntuación: {{ isset($userRatings[$restaurante->id]) ? $userRatings[$restaurante->id] : ($restaurante->valoraciones->avg('puntuación') ?? 0) }}/5
+                                    Puntuación: {{ 
+                                        isset($userRatings[$restaurante->id]) 
+                                        ? (int)$userRatings[$restaurante->id] 
+                                        : (int)($restaurante->valoraciones->avg('puntuación') ?? 0) 
+                                    }}/5
                                 </span>
                             </div>
                         </div>
