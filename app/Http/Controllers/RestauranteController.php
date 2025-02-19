@@ -21,7 +21,7 @@ class RestauranteController extends Controller
     public function index(Request $request)
     {
         // Iniciamos la consulta base para restaurantes
-        $query = Restaurante::with(['tipocomida', 'fotos', 'valoraciones']);
+        $query = Restaurante::with(['tipocomida', 'fotos', 'valoraciones', 'ciudad']);
 
         // Filtrar por nombre si se proporcionó
         if ($request->filled('nombre')) {
@@ -29,27 +29,48 @@ class RestauranteController extends Controller
         }
 
         // Filtrar por ciudad si se proporcionó
-        if ($request->filled('ciudad')) {
+        if ($request->filled('ciudad_id')) {
+            $query->where('ciudad_id', $request->ciudad_id);
+        } elseif ($request->filled('ciudad')) {
             $query->whereHas('ciudad', function ($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->ciudad . '%');
             });
         }
 
+        // Filtrar por tipo de comida
+        if ($request->filled('tipocomida_id')) {
+            $query->where('tipocomida_id', $request->tipocomida_id);
+        }
+
+        // Ordenar por precio
+        if ($request->filled('orden_precio')) {
+            $query->orderByRaw("CASE 
+                WHEN precio_medio = '$' THEN 1 
+                WHEN precio_medio = '$$' THEN 2 
+                WHEN precio_medio = '$$$' THEN 3 
+                WHEN precio_medio = '$$$$' THEN 4 
+            END " . ($request->orden_precio === 'desc' ? 'DESC' : 'ASC'));
+        }
+
+        // Ordenar por puntuación
+        if ($request->filled('orden_puntuacion')) {
+            $query->withAvg('valoraciones', 'puntuación')
+                  ->orderBy('valoraciones_avg_puntuación', $request->orden_puntuacion);
+        }
+
         // Obtener los restaurantes según los filtros
         $restaurantes = $query->get();
 
-        // Obtener los tipos de comida (esto es necesario para el filtro de tipo de comida en la vista)
+        // Obtener los tipos de comida y ciudades para los dropdowns
         $tipos_comida = Tipocomida::all();
-
-        // Obtener las ciudades para el filtro de ciudad (asegurarse de que tienes el modelo Ciudad)
-        $ciudades = Ciudad::all(); // Asegúrate de que Ciudad sea un modelo válido en tu proyecto
+        $ciudades = Ciudad::all();
 
         // Si la solicitud es AJAX, solo devolver el HTML de la lista de restaurantes
         if ($request->ajax()) {
             return view('restaurantes.partials.restaurantes_list', compact('restaurantes'));
         }
 
-        // Enviar los resultados de la búsqueda a la vista junto con los tipos de comida y ciudades
+        // Vista normal con todos los datos
         return view('restaurantes.index', compact('restaurantes', 'tipos_comida', 'ciudades'));
     }
 

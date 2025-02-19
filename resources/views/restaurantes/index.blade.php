@@ -101,6 +101,73 @@
             margin-top: 5px;
             font-size: 14px;
         }
+
+        /* Estilos para los filtros */
+        .filters-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .form-select {
+            border: 2px solid #b22222;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:hover {
+            border-color: #8b0000;
+        }
+
+        .form-select:focus {
+            border-color: #8b0000;
+            box-shadow: 0 0 0 0.2rem rgba(139,0,0,0.25);
+            outline: none;
+        }
+
+        /* Botón limpiar filtros */
+        .btn-clear-filters {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn-clear-filters:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        /* Contenedor de filtros responsive */
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Etiquetas para los filtros */
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -142,11 +209,58 @@
     </nav>
     <br><br>
     
-    <!-- Barra de búsqueda -->
-    <form id="search-form" class="search-form">
-        <input type="text" name="nombre" id="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
-        <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
-    </form>
+    <!-- Barra de búsqueda y filtros -->
+    <div class="container">
+        <form id="search-form" class="search-form">
+            <input type="text" name="nombre" id="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
+            <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
+        </form>
+
+        <!-- Filtros actualizados -->
+        <div class="filters-container">
+            <div class="filters-row">
+                <div class="filter-item">
+                    <label class="filter-label">Ciudad</label>
+                    <select class="form-select" id="ciudad_id" name="ciudad_id">
+                        <option value="">Todas las ciudades</option>
+                        @foreach($ciudades as $ciudad)
+                            <option value="{{ $ciudad->id }}">{{ $ciudad->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label">Tipo de Comida</label>
+                    <select class="form-select" id="tipocomida_id" name="tipocomida_id">
+                        <option value="">Todos los tipos</option>
+                        @foreach($tipos_comida as $tipo)
+                            <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label">Ordenar por Precio</label>
+                    <select class="form-select" id="orden_precio" name="orden_precio">
+                        <option value="">Precio</option>
+                        <option value="asc">Menor a mayor</option>
+                        <option value="desc">Mayor a menor</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label">Ordenar por Puntuación</label>
+                    <select class="form-select" id="orden_puntuacion" name="orden_puntuacion">
+                        <option value="">Puntuación</option>
+                        <option value="desc">Mayor puntuación</option>
+                        <option value="asc">Menor puntuación</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="button" id="clear-filters" class="btn-clear-filters">
+                    <i class="fas fa-undo-alt"></i> Limpiar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
     <hr>
 
     <!-- Contenedor de resultados -->
@@ -163,16 +277,24 @@
     <script src="{{ asset('js/rating.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#nombre, #ciudad').on('input', function() {
+            function actualizarResultados() {
                 var nombre = $('#nombre').val();
                 var ciudad = $('#ciudad').val();
+                var ciudad_id = $('#ciudad_id').val();
+                var tipocomida_id = $('#tipocomida_id').val();
+                var orden_precio = $('#orden_precio').val();
+                var orden_puntuacion = $('#orden_puntuacion').val();
 
                 $.ajax({
                     url: "{{ route('restaurantes.index') }}",
                     method: "GET",
                     data: {
                         nombre: nombre,
-                        ciudad: ciudad
+                        ciudad: ciudad,
+                        ciudad_id: ciudad_id,
+                        tipocomida_id: tipocomida_id,
+                        orden_precio: orden_precio,
+                        orden_puntuacion: orden_puntuacion
                     },
                     success: function(response) {
                         $('#restaurantes-container').html(response);
@@ -181,6 +303,153 @@
                         alert('Ocurrió un error al realizar la búsqueda.');
                     }
                 });
+            }
+
+            // Eventos para la barra de búsqueda
+            $('#nombre, #ciudad').on('input', function() {
+                // Pequeño retraso para evitar demasiadas peticiones
+                clearTimeout($(this).data('timeout'));
+                $(this).data('timeout', setTimeout(function() {
+                    actualizarResultados();
+                }, 300));
+            });
+
+            // Eventos para los filtros
+            $('#ciudad_id, #tipocomida_id, #orden_precio, #orden_puntuacion').on('change', actualizarResultados);
+
+            // Prevenir el envío del formulario
+            $('#search-form').on('submit', function(e) {
+                e.preventDefault();
+                actualizarResultados();
+            });
+
+            // Función para limpiar filtros
+            $('#clear-filters').click(function() {
+                // Limpiar todos los campos
+                $('#nombre').val('');
+                $('#ciudad').val('');
+                $('#ciudad_id').val('');
+                $('#tipocomida_id').val('');
+                $('#orden_precio').val('');
+                $('#orden_puntuacion').val('');
+                
+                // Actualizar resultados
+                actualizarResultados();
+            });
+
+            // Sistema de rating en tiempo real
+            function initializeRating() {
+                $('.stars').each(function() {
+                    const $starsContainer = $(this);
+                    const restaurantId = $starsContainer.data('restaurant-id');
+                    const $stars = $starsContainer.find('.star-rating');
+                    const $ratingText = $starsContainer.siblings('.rating-text');
+
+                    // Hover effect
+                    $stars.hover(
+                        function() {
+                            const rating = $(this).data('rating');
+                            updateStarsDisplay($stars, rating);
+                        },
+                        function() {
+                            const currentRating = $ratingText.data('current-rating') || 0;
+                            updateStarsDisplay($stars, currentRating);
+                        }
+                    );
+
+                    // Click event
+                    $stars.click(function() {
+                        if (!$(this).data('logged-in')) {
+                            window.location.href = "{{ route('login') }}";
+                            return;
+                        }
+
+                        const rating = $(this).data('rating');
+                        submitRating(restaurantId, rating, $stars, $ratingText);
+                    });
+                });
+            }
+
+            function updateStarsDisplay($stars, rating) {
+                $stars.each(function() {
+                    const starRating = $(this).data('rating');
+                    $(this).toggleClass('active', starRating <= rating);
+                });
+            }
+
+            function submitRating(restaurantId, rating, $stars, $ratingText) {
+                $.ajax({
+                    url: "{{ route('restaurantes.rate') }}",
+                    method: 'POST',
+                    data: {
+                        restaurant_id: restaurantId,
+                        rating: rating,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Actualizar la visualización de las estrellas actuales
+                            updateStarsDisplay($stars, rating);
+                            $ratingText.text(`Puntuación: ${rating}/5`);
+                            $ratingText.data('current-rating', rating);
+
+                            // Actualizar el promedio en tiempo real
+                            if (response.newRating !== undefined) {
+                                // Actualizar todas las estrellas para este restaurante cuando no está logueado
+                                $(`.stars[data-restaurant-id="${restaurantId}"]`).each(function() {
+                                    const $otherStars = $(this).find('.star-rating');
+                                    const $otherRatingText = $(this).siblings('.rating-text');
+                                    
+                                    if (!$otherStars.data('logged-in')) {
+                                        updateStarsDisplay($otherStars, response.newRating);
+                                        $otherRatingText.text(`Puntuación: ${response.newRating}/5`);
+                                        $otherRatingText.data('current-rating', response.newRating);
+                                    }
+                                });
+                            }
+
+                            // Mostrar mensaje de éxito
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            });
+
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Valoración guardada correctamente'
+                            });
+
+                            // Si hay filtros de puntuación activos, actualizar los resultados
+                            if ($('#orden_puntuacion').val()) {
+                                actualizarResultados();
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo guardar la valoración'
+                        });
+                    }
+                });
+            }
+
+            // Inicializar el sistema de rating
+            initializeRating();
+
+            // Reinicializar rating después de actualizar resultados
+            $(document).ajaxComplete(function(event, xhr, settings) {
+                if (settings.url.includes('restaurantes')) {
+                    initializeRating();
+                }
             });
         });
     </script>

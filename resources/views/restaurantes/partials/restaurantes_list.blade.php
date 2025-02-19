@@ -27,22 +27,45 @@
                             <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
                             <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
     
-                            <!-- Sección de rating -->
+                            <!-- Sistema de rating actualizado -->
                             <div class="rating-container mt-3">
-                                <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
-                                    <i class="fas fa-star star-rating" data-rating="1"></i>
-                                    <i class="fas fa-star star-rating" data-rating="2"></i>
-                                    <i class="fas fa-star star-rating" data-rating="3"></i>
-                                    <i class="fas fa-star star-rating" data-rating="4"></i>
-                                    <i class="fas fa-star star-rating" data-rating="5"></i>
+                                <!-- Puntuación media -->
+                                <div class="average-rating mb-2">
+                                    <small class="text-muted">Puntuación media:</small>
+                                    <div class="stars" data-restaurant-id="{{ $restaurante->id }}-avg">
+                                        @php
+                                            $averageRating = round($restaurante->valoraciones->avg('puntuación') ?? 0);
+                                        @endphp
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star star-rating {{ $i <= $averageRating ? 'active' : '' }}" 
+                                               data-rating="{{ $i }}"
+                                               style="pointer-events: none"></i>
+                                        @endfor
+                                        <span class="ms-2">({{ number_format($averageRating, 1) }})</span>
+                                    </div>
                                 </div>
-                                <span class="rating-text d-block mt-2">
-                                    Puntuación: {{ 
-                                        isset($userRatings[$restaurante->id]) 
-                                        ? (int)$userRatings[$restaurante->id] 
-                                        : (int)($restaurante->valoraciones->avg('puntuación') ?? 0) 
-                                    }}/5
-                                </span>
+
+                                <!-- Puntuación del usuario (solo si está autenticado) -->
+                                @auth
+                                    <div class="user-rating">
+                                        <small class="text-muted">Tu puntuación:</small>
+                                        <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
+                                            @php
+                                                $userRating = $restaurante->valoraciones
+                                                    ->where('user_id', auth()->id())
+                                                    ->first()->puntuación ?? 0;
+                                            @endphp
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="fas fa-star star-rating {{ $i <= $userRating ? 'active' : '' }}" 
+                                                   data-rating="{{ $i }}"
+                                                   data-logged-in="true"></i>
+                                            @endfor
+                                            <span class="rating-text" data-current-rating="{{ $userRating }}">
+                                                ({{ $userRating > 0 ? $userRating : 'Sin valorar' }})
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endauth
                             </div>
                         </div>
                     </div>
@@ -50,6 +73,49 @@
             </div>
         @endforeach
     </div>
+
+    <style>
+        .rating-container {
+            margin-top: 15px;
+        }
+
+        .stars {
+            display: inline-flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .star-rating {
+            font-size: 18px;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+
+        .star-rating.active {
+            color: #ffc107;
+        }
+
+        .average-rating .star-rating {
+            font-size: 16px;
+        }
+
+        .rating-text {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 14px;
+        }
+
+        .text-muted {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .user-rating {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+    </style>
 </body>
 </html>
 
