@@ -7,6 +7,86 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+# Aplicación de Gestión de Restaurantes
+
+## Descripción
+Esta aplicación web permite gestionar restaurantes y usuarios, con un sistema de autenticación y diferentes roles de usuario. Los usuarios pueden ver restaurantes, filtrarlos y valorarlos, mientras que los administradores pueden gestionar tanto restaurantes como usuarios.
+
+## Funcionalidades Principales
+
+### Gestión de Restaurantes
+- **Listado de Restaurantes**: Visualización de todos los restaurantes con sus detalles
+- **Filtros Dinámicos**:
+  - Por nombre (búsqueda en tiempo real)
+  - Por ciudad
+  - Por tipo de comida
+  - Por rango de precio
+- **Operaciones CRUD**:
+  - Crear nuevos restaurantes
+  - Editar restaurantes existentes
+  - Eliminar restaurantes
+  - Ver detalles de restaurantes
+- **Gestión de Imágenes**: Subida y visualización de imágenes de restaurantes
+
+### Gestión de Usuarios
+- **Panel de Administración**:
+  - Listado de usuarios
+  - Creación de nuevos usuarios
+  - Edición de usuarios existentes
+  - Eliminación de usuarios
+- **Roles de Usuario**:
+  - Administrador: Acceso total al sistema
+  - Usuario: Acceso limitado a funciones básicas
+
+### Sistema de Autenticación
+- Login/Logout
+- Registro de nuevos usuarios
+- Protección de rutas según rol
+
+## Tecnologías Utilizadas
+- Laravel (Backend)
+- Bootstrap 5 (Frontend)
+- JavaScript (Interactividad)
+- MySQL (Base de datos)
+
+
+```
+
+. Ejecutar migraciones y seeders:
+```bash
+php artisan migrate:fresh --seed
+```
+
+
+```
+
+. Iniciar el servidor:
+```bash
+php artisan serve
+```
+
+## Uso
+1. Acceder a la aplicación a través de http://localhost:8000
+2. Iniciar sesión con las credenciales de administrador:
+    - Usuario admin: Admin
+    - Usuario normal: kilian
+   - Password: qweQWE123
+
+## Estructura de la Base de Datos
+- **users**: Almacena información de usuarios
+- **roles**: Define los roles disponibles
+- **restaurantes**: Información de restaurantes
+- **ciudades**: Catálogo de ciudades
+- **tipocomidas**: Tipos de cocina disponibles
+- **fotos**: Almacena las imágenes de los restaurantes
+
+## Mantenimiento
+- Las imágenes se almacenan en storage/app/public/restaurantes
+- Los logs se encuentran en storage/logs
+- La caché se puede limpiar con `php artisan cache:clear`
+
+
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
