@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
 use App\Models\Tipocomida;
-use Illuminate\Http\Request;
+use App\Models\Ciudad;
 use App\Models\Valoracion;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Ciudad;
-
 
 class RestauranteController extends Controller
 {
@@ -20,49 +19,78 @@ class RestauranteController extends Controller
      */
     public function index(Request $request)
     {
-        // Iniciamos la consulta base para restaurantes
-        $query = Restaurante::with(['tipocomida', 'fotos', 'valoraciones']);
+        try {
+            // Iniciamos la consulta base para restaurantes
+            $query = Restaurante::with(['tipocomida', 'fotos', 'valoraciones']);
 
-        // Filtrar por nombre si se proporcionó
-        if ($request->filled('nombre')) {
-            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+            // Filtrar por nombre si se proporcionó
+            if ($request->filled('nombre')) {
+                $query->where('nombre', 'like', '%' . $request->nombre . '%');
+            }
+
+            // Filtrar por ciudad si se proporcionó
+            if ($request->filled('ciudad')) {
+                $query->whereHas('ciudad', function ($q) use ($request) {
+                    $q->where('nombre', 'like', '%' . $request->ciudad . '%');
+                });
+            }
+
+            // Ordenar por precio si se proporcionó
+            if ($request->filled('precio')) {
+                $query->orderBy('precio_medio', $request->precio);
+            }
+
+            // Ordenar por valoración si se proporcionó
+            if ($request->filled('valoracion')) {
+                $query->withAvg('valoraciones', 'puntuación')
+                      ->orderBy('valoraciones_avg_puntuación', $request->valoracion);
+            }
+
+            // Filtrar por ciudades seleccionadas
+            if ($request->filled('ciudades')) {
+                $query->whereIn('ciudad_id', $request->ciudades);
+            }
+
+            // Filtrar por tipos de comida seleccionados
+            if ($request->filled('tiposComida')) {
+                $query->whereIn('tipocomida_id', $request->tiposComida);
+            }
+
+            // Obtener los restaurantes según los filtros
+            $restaurantes = $query->get();
+
+            // Obtener los tipos de comida para el filtro
+            $tipos_comida = Tipocomida::all();
+
+            // Obtener las ciudades para el filtro
+            $ciudades = Ciudad::all();
+
+            // Si la solicitud es AJAX, devolver solo la lista de restaurantes
+            if ($request->ajax()) {
+                return view('restaurantes.partials.restaurantes_list', compact('restaurantes'));
+            }
+
+            // Enviar datos a la vista
+            return view('restaurantes.index', [
+                'restaurantes' => $restaurantes,
+                'tipos_comida' => $tipos_comida,
+                'ciudades' => $ciudades
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al cargar los restaurantes: ' . $e->getMessage());
         }
-
-        // Filtrar por ciudad si se proporcionó
-        if ($request->filled('ciudad')) {
-            $query->whereHas('ciudad', function ($q) use ($request) {
-                $q->where('nombre', 'like', '%' . $request->ciudad . '%');
-            });
-        }
-
-        // Obtener los restaurantes según los filtros
-        $restaurantes = $query->get();
-
-        // Obtener los tipos de comida (esto es necesario para el filtro de tipo de comida en la vista)
-        $tipos_comida = Tipocomida::all();
-
-        // Obtener las ciudades para el filtro de ciudad (asegurarse de que tienes el modelo Ciudad)
-        $ciudades = Ciudad::all(); // Asegúrate de que Ciudad sea un modelo válido en tu proyecto
-
-        // Si la solicitud es AJAX, solo devolver el HTML de la lista de restaurantes
-        if ($request->ajax()) {
-            return view('restaurantes.partials.restaurantes_list', compact('restaurantes'));
-        }
-
-        // Enviar los resultados de la búsqueda a la vista junto con los tipos de comida y ciudades
-        return view('restaurantes.index', compact('restaurantes', 'tipos_comida', 'ciudades'));
     }
 
     /**
-     * Mostrar formulario para crear un nuevo restaurante
+     * Mostrar formulario para crear un nuevo restaurante.
      */
     public function create()
     {
-        return view('restaurantes.create'); // Si tienes una vista para crear
+        return view('restaurantes.create');
     }
 
     /**
-     * Almacenar un nuevo restaurante
+     * Almacenar un nuevo restaurante.
      */
     public function store(Request $request)
     {
@@ -84,7 +112,7 @@ class RestauranteController extends Controller
                 $imagen = $request->file('imagen');
                 $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
                 $imagen->storeAs('public/restaurantes', $nombreImagen);
-                
+
                 $restaurante->fotos()->create([
                     'ruta_imagen' => 'storage/restaurantes/' . $nombreImagen
                 ]);
@@ -99,22 +127,22 @@ class RestauranteController extends Controller
     }
 
     /**
-     * Mostrar el formulario para editar un restaurante
+     * Mostrar el formulario para editar un restaurante.
      */
     public function edit($id)
     {
         $restaurante = Restaurante::findOrFail($id);
-        return view('restaurantes.edit', compact('restaurante')); // Si tienes una vista para editar
+        return view('restaurantes.edit', compact('restaurante'));
     }
 
     /**
-     * Actualizar un restaurante
+     * Actualizar un restaurante.
      */
     public function update(Request $request, $id)
     {
         try {
             $restaurante = Restaurante::findOrFail($id);
-            
+
             $validatedData = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'dirección' => 'required|string|max:255',
@@ -128,7 +156,6 @@ class RestauranteController extends Controller
             $restaurante->update($validatedData);
 
             if ($request->hasFile('imagen')) {
-                // Eliminar imagen anterior si existe
                 if ($restaurante->fotos->isNotEmpty()) {
                     Storage::delete(str_replace('storage/', 'public/', $restaurante->fotos->first()->ruta_imagen));
                     $restaurante->fotos()->delete();
@@ -137,7 +164,7 @@ class RestauranteController extends Controller
                 $imagen = $request->file('imagen');
                 $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
                 $imagen->storeAs('public/restaurantes', $nombreImagen);
-                
+
                 $restaurante->fotos()->create([
                     'ruta_imagen' => 'storage/restaurantes/' . $nombreImagen
                 ]);
@@ -152,21 +179,19 @@ class RestauranteController extends Controller
     }
 
     /**
-     * Eliminar un restaurante
+     * Eliminar un restaurante.
      */
     public function destroy($id)
     {
         try {
             $restaurante = Restaurante::findOrFail($id);
-            
-            // Eliminar las imágenes físicas
+
             foreach ($restaurante->fotos as $foto) {
                 Storage::delete(str_replace('storage/', 'public/', $foto->ruta_imagen));
             }
-            
-            // La eliminación en cascada se encargará de eliminar las fotos y valoraciones relacionadas
+
             $restaurante->delete();
-            
+
             return redirect()->back()->with('success', 'Restaurante eliminado correctamente');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error al eliminar el restaurante: ' . $e->getMessage());
@@ -174,7 +199,7 @@ class RestauranteController extends Controller
     }
 
     /**
-     * Guardar una valoración para un restaurante
+     * Guardar una valoración para un restaurante.
      */
     public function rate(Request $request)
     {
@@ -186,7 +211,6 @@ class RestauranteController extends Controller
                 'rating' => 'required|integer|min:1|max:5'
             ]);
 
-            // Crear o actualizar la valoración
             $valoracion = Valoracion::updateOrCreate(
                 [
                     'user_id' => auth()->id(),
@@ -197,7 +221,6 @@ class RestauranteController extends Controller
                 ]
             );
 
-            // Calcular la nueva media usando Query Builder para mejor rendimiento
             $newRating = DB::table('valoraciones')
                 ->where('restaurante_id', $request->restaurant_id)
                 ->avg('puntuación');
@@ -206,10 +229,9 @@ class RestauranteController extends Controller
 
             return response()->json([
                 'success' => true,
-                'newRating' => round($newRating), // Redondear al entero más cercano
+                'newRating' => round($newRating),
                 'message' => 'Valoración guardada correctamente'
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -220,14 +242,11 @@ class RestauranteController extends Controller
     }
 
     /**
-     * Mostrar los detalles de un restaurante
+     * Mostrar los detalles de un restaurante.
      */
     public function show(Restaurante $restaurante)
     {
-        // Obtener las valoraciones del restaurante con sus usuarios
         $valoraciones = $restaurante->valoraciones()->with('user')->get();
-        
-        // Si el usuario está autenticado, obtener su valoración
         $miValoracion = auth()->check() 
             ? $restaurante->valoraciones()->where('user_id', auth()->id())->first() 
             : null;

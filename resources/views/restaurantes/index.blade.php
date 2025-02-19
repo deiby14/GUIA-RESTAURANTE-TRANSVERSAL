@@ -145,89 +145,126 @@
         </div>
     </nav>
     <br><br>
-    
     <!-- Barra de búsqueda -->
-    <!-- Formulario de búsqueda -->
     <form id="search-form" class="search-form">
-        <input type="text" name="nombre" id="nombre" placeholder="Buscar por nombre" value="{{ request()->get('nombre') }}">
-        <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad" value="{{ request()->get('ciudad') }}">
+        <input type="text" name="nombre" id="nombre" placeholder="Buscar por nombre">
+        <input type="text" name="ciudad" id="ciudad" placeholder="Buscar por ciudad">
+        <button type="button" id="btn-buscar">Buscar</button>
     </form>
-<hr>
+
+    <!-- Botones de filtro -->
+    <div class="text-center mb-4">
+        <button class="btn btn-outline-danger filter-btn" data-filter="precio">Ordenar por Precio</button>
+        <button class="btn btn-outline-danger filter-btn" data-filter="valoracion">Ordenar por Valoración</button>
+
+        <!-- Dropdown Filtro de Ciudad -->
+        <div class="btn-group">
+            <button class="btn btn-outline-danger dropdown-toggle" type="button" id="dropdownCiudad" data-bs-toggle="dropdown">
+                Filtrar por Ciudad
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownCiudad">
+                @foreach ($ciudades as $ciudad)
+                    <li>
+                        <a class="dropdown-item filtro-ciudad" href="#" data-id="{{ $ciudad->id }}">{{ $ciudad->nombre }}</a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <!-- Dropdown Filtro de Tipo de Comida -->
+        <div class="btn-group">
+            <button class="btn btn-outline-danger dropdown-toggle" type="button" id="dropdownComida" data-bs-toggle="dropdown">
+                Filtrar por Tipo de Comida
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownComida">
+                @foreach ($tipos_comida as $tipo)
+                    <li>
+                        <a class="dropdown-item filtro-comida" href="#" data-id="{{ $tipo->id }}">{{ $tipo->nombre }}</a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
     <!-- Contenedor de resultados -->
     <div id="restaurantes-container">
         @include('restaurantes.partials.restaurantes_list', ['restaurantes' => $restaurantes])
     </div>
 
-    <!-- JavaScript para AJAX -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/rating.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // Evento para realizar la búsqueda mientras el usuario escribe
-            $('#nombre, #ciudad').on('input', function() {
-                // Recoger los datos de los campos de búsqueda
+            let timeoutId;
+    
+            function filtrarRestaurantes() {
                 var nombre = $('#nombre').val();
                 var ciudad = $('#ciudad').val();
-
-                // Realizar la solicitud AJAX
+                var filtroPrecio = $('.filter-btn[data-filter="precio"]').hasClass('active') ? 'asc' : '';
+                var filtroValoracion = $('.filter-btn[data-filter="valoracion"]').hasClass('active') ? 'desc' : '';
+    
+                var ciudadesSeleccionadas = $('.filtro-ciudad.active').map(function() {
+                    return $(this).data('id');
+                }).get();
+    
+                var tiposComidaSeleccionados = $('.filtro-comida.active').map(function() {
+                    return $(this).data('id');
+                }).get();
+    
                 $.ajax({
-                    url: "{{ route('restaurantes.index') }}", // Ruta para manejar la búsqueda
+                    url: "{{ route('restaurantes.index') }}",
                     method: "GET",
                     data: {
                         nombre: nombre,
-                        ciudad: ciudad
+                        ciudad: ciudad,
+                        precio: filtroPrecio,
+                        valoracion: filtroValoracion,
+                        ciudades: ciudadesSeleccionadas,
+                        tiposComida: tiposComidaSeleccionados
                     },
                     success: function(response) {
-                        // Actualizar el contenedor con los nuevos resultados
                         $('#restaurantes-container').html(response);
                     },
                     error: function() {
-                        alert('Ocurrió un error al realizar la búsqueda.');
+                        alert('Error al cargar los datos.');
                     }
                 });
+            }
+    
+            // Buscar automáticamente al escribir en los campos de búsqueda con debounce
+            $('#nombre, #ciudad').on('input', function() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(filtrarRestaurantes, 300); // 300ms de retraso
+            });
+    
+            // Buscar al hacer clic en el botón Buscar
+            $('#btn-buscar').on('click', filtrarRestaurantes);
+    
+            // Manejo de botones de filtro
+            $('.filter-btn').on('click', function() {
+                // Desactivar otros botones de filtro
+                $('.filter-btn').not(this).removeClass('active');
+                // Alternar estado activo del botón clickeado
+                $(this).toggleClass('active');
+                filtrarRestaurantes();
+            });
+    
+            // Manejo de selección en dropdown de ciudad
+            $('.filtro-ciudad').on('click', function(e) {
+                e.preventDefault();
+                $(this).toggleClass('active');
+                filtrarRestaurantes();
+            });
+    
+            // Manejo de selección en dropdown de tipo de comida
+            $('.filtro-comida').on('click', function(e) {
+                e.preventDefault();
+                $(this).toggleClass('active');
+                filtrarRestaurantes();
             });
         });
     </script>
-
-    <!-- Título de la página -->
-    <div class="container mt-5">
-        <h1 class="mb-4">Lista de Restaurantes</h1>
-        <div class="row">
-            @foreach ($restaurantes as $restaurante)
-                <div class="col-md-4 mb-4">
-                    <a href="{{ route('restaurantes.show', $restaurante->id) }}" class="text-decoration-none text-dark">
-                        <div class="card h-100">
-                            @if ($restaurante->fotos && $restaurante->fotos->isNotEmpty())
-                                <img src="{{ asset($restaurante->fotos->first()->ruta_imagen) }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                            @else
-                                <img src="{{ asset('img/restaurante_1_' . str_pad(rand(0, 9), 4, '0', STR_PAD_LEFT) . '.jpg') }}" class="card-img-top" alt="{{ $restaurante->nombre }}">
-                            @endif
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $restaurante->nombre }}</h5>
-                                <p><strong>Ciudad:</strong> {{$restaurante->ciudad->nombre}}</p>
-                                <p><strong>Precio Medio:</strong> {{ $restaurante->precio_medio }}</p>
-                                <p><strong>Tipo de Cocina:</strong> {{ $restaurante->tipocomida->nombre ?? 'No especificado' }}</p>
-                                <div class="rating-container">
-                                    <div class="stars" data-restaurant-id="{{ $restaurante->id }}">
-                                        <i class="fas fa-star star-rating" data-rating="1"></i>
-                                        <i class="fas fa-star star-rating" data-rating="2"></i>
-                                        <i class="fas fa-star star-rating" data-rating="3"></i>
-                                        <i class="fas fa-star star-rating" data-rating="4"></i>
-                                        <i class="fas fa-star star-rating" data-rating="5"></i>
-                                    </div>
-                                    <span class="rating-text">
-                                        Puntuación: {{ isset($userRatings[$restaurante->id]) ? $userRatings[$restaurante->id] : ($restaurante->valoraciones->avg('puntuación') ?? 0) }}/5
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- Agregar Bootstrap JS (opcional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/rating.js') }}"></script>
 </body>
 </html>
