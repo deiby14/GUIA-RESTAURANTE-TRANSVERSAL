@@ -77,8 +77,13 @@
     </style>
 </head>
 <body>
-    <!-- Incluir el mismo navbar que tienes en index -->
-    
+    <!-- Botón volver arriba a la derecha -->
+    <div class="container-fluid" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <a href="{{ route('restaurantes.index') }}" class="btn btn-outline-danger">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-8 mx-auto">
@@ -165,18 +170,7 @@
         </div>
     </div>
 
-    <!-- Agregar botón volver arriba a la derecha, justo después del navbar -->
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-12 text-end">
-                <a href="{{ route('restaurantes.index') }}" class="btn btn-outline-danger">
-                    <i class="fas fa-arrow-left"></i> Volver
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Agregar botón volver al final de la página -->
+    <!-- Botón volver abajo -->
     <div class="text-center mt-4 mb-5">
         <a href="{{ route('restaurantes.index') }}" class="btn btn-outline-danger">
             <i class="fas fa-arrow-left"></i> Volver a restaurantes

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CiudadesSeeder::class,   // Crea ciudades
             TipocomidasSeeder::class,    // Primero crear los tipos de comida
             RestaurantesSeeder::class,    // Luego los restaurantes
+            FotosSeeder::class,
             ValoracionesSeeder::class, // Crea valoraciones después de restaurantes
         ]);
 

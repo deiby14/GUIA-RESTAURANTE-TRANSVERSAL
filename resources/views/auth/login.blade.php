@@ -62,9 +62,6 @@
                     <input type="password" class="form-control" id="password" name="password">
                 </div>
 
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                </div>
 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-outline-custom">Iniciar Sesión</button>
